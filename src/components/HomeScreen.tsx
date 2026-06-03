@@ -99,7 +99,7 @@ const HomeScreen = () => {
               
               {/* CTA Button */}
               <button
-                onClick={() => setCurrentScreen('payment')}
+                onClick={() => setCurrentScreen('players')}
                 className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg tap-highlight-none"
               >
                 🎮 COMMENCER À JOUER
