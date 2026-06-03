@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { useCards } from '../hooks/useSupabaseCards';
 import { useSubscription } from '../hooks/useSubscription';
@@ -15,6 +15,8 @@ const GameScreen = () => {
   const [availableCards, setAvailableCards] = useState<any[]>([]);
   const [totalGameCards, setTotalGameCards] = useState(20);
   const [playerTargetCounts, setPlayerTargetCounts] = useState<Record<string, number>>({});
+  const touchStartX = useRef<number>(0);
+  const touchStartY = useRef<number>(0);
   
   // Récupération des cartes depuis Supabase
   const { data: supabaseCards, isLoading, error, refetch } = useCards();
@@ -39,12 +41,6 @@ const GameScreen = () => {
             relationships,
             subscribed || false
           );
-          
-          console.log('🎮 Cartes récupérées pour', players.length, 'joueurs:', {
-            totalCards: cards.length,
-            limit: totalGameCards,
-            preferences: gameSession.preferences
-          });
           
           const shuffled = shuffleArray(cards);
           const limitedCards = shuffled.slice(0, totalGameCards);
@@ -107,8 +103,6 @@ const GameScreen = () => {
       });
       setPlayerTargetCounts(newCounts);
       
-      console.log('👥 Rotation joueurs:', newCounts);
-      
       setTimeout(() => {
         setIsAnimating(false);
       }, 50);
@@ -132,8 +126,6 @@ const GameScreen = () => {
       );
       
       if (cards.length === 0) {
-        // Pas de nouvelles cartes disponibles
-        console.log('Aucune nouvelle carte disponible');
         setIsRefreshing(false);
         return;
       }
@@ -158,7 +150,6 @@ const GameScreen = () => {
         setPlayerTargetCounts(newCounts);
       }
       
-      console.log(`${limitedCards.length} nouvelles cartes chargées`);
     } catch (error) {
       console.error('Erreur lors du rechargement des cartes:', error);
     }
@@ -224,6 +215,19 @@ const GameScreen = () => {
     );
   }
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+    if ((Math.abs(dx) > 60 && dx < 0) || (Math.abs(dy) > 60 && dy < 0)) {
+      handleNextCard();
+    }
+  };
+
   const cardsPlayed = gameSession?.currentCardIndex || 0;
   const cardsRemaining = totalGameCards - cardsPlayed;
   const progress = (cardsPlayed / totalGameCards) * 100;
@@ -284,8 +288,8 @@ const GameScreen = () => {
                 )}
               </button>
             </div>
-            <span className="text-caption text-white/80">
-              {cardsRemaining} / {totalGameCards} cartes
+            <span className="text-caption text-white/80 font-semibold">
+              {cardsPlayed + 1} / {totalGameCards}
             </span>
           </div>
           
@@ -307,10 +311,12 @@ const GameScreen = () => {
 
         {/* Card */}
         <div className="flex-1 flex items-center justify-center animate-slide-up">
-          <div 
+          <div
             className={`card-game w-full max-w-sm transition-all duration-300 ${
               isAnimating ? 'scale-95 opacity-50' : 'scale-100 opacity-100'
             }`}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
           >
             <div className="text-center">
               <div className="text-4xl mb-6">🎯</div>
@@ -332,7 +338,7 @@ const GameScreen = () => {
           </button>
           
           <p className="text-caption text-white/60 text-center mt-3">
-            Appuyez sur le bouton ou glissez vers le haut pour la carte suivante
+            Appuie ou swipe ← pour la carte suivante
           </p>
         </div>
       </div>

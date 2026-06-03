@@ -3,3 +3,4 @@ dist
 .env
 .env.local
 *.timestamp-*.mjs
+partiz-main/

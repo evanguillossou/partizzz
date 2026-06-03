@@ -25,7 +25,9 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [players, setPlayers] = useState<Player[]>([]);
   const [currentMode, setCurrentMode] = useState<GameMode | null>(null);
   const [gameSession, setGameSession] = useState<GameSession | null>(null);
-  const [currentScreen, setCurrentScreen] = useState('home');
+  const [currentScreen, setCurrentScreen] = useState(() =>
+    localStorage.getItem('partiz_visited') ? 'players' : 'home'
+  );
   const [feedback, setFeedback] = useState<FeedbackRating | null>(null);
   const [relationships, setRelationships] = useState<RelationshipData>({});
 
@@ -33,7 +35,7 @@ export const GameProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setPlayers([]);
     setCurrentMode(null);
     setGameSession(null);
-    setCurrentScreen('home');
+    setCurrentScreen('players');
     setFeedback(null);
     setRelationships({});
   };

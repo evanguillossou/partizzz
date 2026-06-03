@@ -147,13 +147,6 @@ export const filterCardsByRules = (
   isDateMode: boolean,
   playerCount: number
 ): Card[] => {
-  console.log('🔍 Filtrage des cartes:', {
-    totalCards: cards.length,
-    playerCount,
-    groupProximity,
-    preferences,
-  });
-
   const filtered = cards.filter(card => {
     // Mode "T'as la réf" : uniquement les cartes isRef
     if (preferences.refMode) {
@@ -209,7 +202,6 @@ export const filterCardsByRules = (
     return true;
   });
 
-  console.log(`✅ Cartes éligibles : ${filtered.length} / ${cards.length}`);
   return filtered;
 };
 
@@ -301,14 +293,6 @@ export const selectOptimalCards = (
 
   const isDateMode = playerCount === 2 && preferences.discovery === true;
 
-  console.log('🎯 Sélection optimale:', {
-    playerCount,
-    groupProximity,
-    isDateMode,
-    preferences,
-    totalCards: availableCards.length,
-  });
-
   // 1. Filtrer les cartes inéligibles
   const eligible = filterCardsByRules(
     availableCards,
@@ -346,13 +330,6 @@ export const selectOptimalCards = (
   const resultLow    = interleaveByType(shuffledLow);
 
   const final = preventConsecutiveSameType([...resultHigh, ...resultMedium, ...resultLow]);
-
-  console.log('🏆 Résultat final:', {
-    high: resultHigh.length,
-    medium: resultMedium.length,
-    low: resultLow.length,
-    total: final.length,
-  });
 
   return final;
 };
