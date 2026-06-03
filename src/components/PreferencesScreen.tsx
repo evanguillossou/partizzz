@@ -73,26 +73,6 @@ const PreferencesScreen = () => {
     setCurrentScreen('game');
   };
 
-  // Fonction pour lancer directement le mode "T'as la réf"
-  const handleStartRefGame = () => {
-    const preferences = {
-      sexualLevel: 0, // Pas de contenu sexuel pour les références
-      alcoholLevel: 0, // Pas d'alcool pour les références
-      deepQuestions: false,
-      votes: false,
-      discovery: false,
-      refMode: true // Nouveau mode référence
-    };
-
-    setGameSession({
-      players,
-      preferences,
-      usedCardIds: [],
-      currentCardIndex: 0
-    });
-
-    setCurrentScreen('game');
-  };
 
   const handleBack = () => {
     // Si on a configuré les relations et qu'on est un groupe, retourner à l'écran de saut des relations
@@ -218,22 +198,6 @@ const PreferencesScreen = () => {
                 </div>
               </button>
 
-              {/* T'as la réf Button */}
-              <button
-                onClick={handleStartRefGame}
-                className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-2xl">📱</span>
-                  <div className="flex-1">
-                    <h3 className="text-heading-lg text-white">T'as la réf</h3>
-                    <p className="text-body-sm text-white/70">Trouve la référence avant ton adversaire !</p>
-                  </div>
-                  <div className="text-white/50">
-                    →
-                  </div>
-                </div>
-              </button>
             </>
           ) : null}
         </div>

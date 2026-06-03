@@ -40,13 +40,6 @@ export const gameModes: GameMode[] = [
     emoji: '🧠',
     color: 'from-green-500 to-teal-600',
   },
-  {
-    id: 'tas-la-ref',
-    name: "T'as la réf",
-    description: "Mode spécial pour 2 joueurs : trouve la référence avant ton adversaire ! Trends, memes et culture web.",
-    emoji: '📱',
-    color: 'from-blue-500 to-cyan-600',
-  },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2063,5 +2056,4 @@ export const cards: Card[] = [
   ...newGroupCards,
   ...sexMidCards,
   ...funCasualCards,
-  ...refCards,
 ];
