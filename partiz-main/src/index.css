@@ -1,0 +1,321 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PARTIZ DESIGN SYSTEM - Party-ready, mobile-first, dark mode */
+
+@layer base {
+  :root {
+    /* Core Brand Colors */
+    --party-pink: #FF4EB8;
+    --party-black: #000000;
+    --party-white: #FFFFFF;
+    
+    /* Extended Color Palette */
+    --pink-50: #FFF0F9;
+    --pink-100: #FFE1F3;
+    --pink-200: #FFC7E8;
+    --pink-300: #FF9DD5;
+    --pink-400: #FF4EB8;
+    --pink-500: #FF4EB8;
+    --pink-600: #E63DA0;
+    --pink-700: #CC2C88;
+    --pink-800: #B31B70;
+    --pink-900: #990A58;
+
+    /* Neutral Grays for Dark Mode */
+    --gray-50: #F9FAFB;
+    --gray-100: #F3F4F6;
+    --gray-200: #E5E7EB;
+    --gray-300: #D1D5DB;
+    --gray-400: #9CA3AF;
+    --gray-500: #6B7280;
+    --gray-600: #4B5563;
+    --gray-700: #374151;
+    --gray-800: #1F2937;
+    --gray-900: #111827;
+
+    /* Semantic Colors */
+    --success: #10B981;
+    --warning: #F59E0B;
+    --error: #EF4444;
+    --info: #3B82F6;
+
+    /* Design System Variables */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 220 13% 7%;
+    --card-foreground: 0 0% 100%;
+    --popover: 220 13% 7%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 316 100% 65%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 220 13% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 13% 15%;
+    --muted-foreground: 220 9% 60%;
+    --accent: 316 100% 65%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 20%;
+    --input: 220 13% 20%;
+    --ring: 316 100% 65%;
+    --radius: 1rem;
+
+    /* Typography Scale */
+    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    
+    /* Spacing Scale (4px base) */
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem;  /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem;    /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem;  /* 24px */
+    --space-8: 2rem;    /* 32px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem;   /* 48px */
+    --space-16: 4rem;   /* 64px */
+    --space-20: 5rem;   /* 80px */
+    --space-24: 6rem;   /* 96px */
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-pink: 0 0 20px rgb(255 78 184 / 0.3);
+    --shadow-pink-lg: 0 0 40px rgb(255 78 184 / 0.4);
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Typography Classes */
+  .text-display-xl {
+    @apply text-5xl font-black tracking-tight leading-none;
+  }
+
+  .text-display-lg {
+    @apply text-4xl font-black tracking-tight leading-tight;
+  }
+
+  .text-display-md {
+    @apply text-3xl font-bold tracking-tight leading-tight;
+  }
+
+  .text-display-sm {
+    @apply text-2xl font-bold tracking-tight leading-tight;
+  }
+
+  .text-heading-xl {
+    @apply text-xl font-bold leading-tight;
+  }
+
+  .text-heading-lg {
+    @apply text-lg font-bold leading-tight;
+  }
+
+  .text-heading-md {
+    @apply text-base font-semibold leading-tight;
+  }
+
+  .text-body-lg {
+    @apply text-lg font-medium leading-relaxed;
+  }
+
+  .text-body-md {
+    @apply text-base font-normal leading-relaxed;
+  }
+
+  .text-body-sm {
+    @apply text-sm font-normal leading-relaxed;
+  }
+
+  .text-caption {
+    @apply text-xs font-medium leading-tight;
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn-primary {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 
+           py-4 px-8 rounded-2xl font-bold text-lg 
+           shadow-lg hover:shadow-pink transform hover:scale-105 
+           transition-all duration-200 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-secondary-foreground hover:bg-secondary/80
+           py-3 px-6 rounded-xl font-semibold text-base
+           border border-border hover:border-primary/30
+           transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-ghost {
+    @apply text-foreground hover:bg-secondary/50 hover:text-primary
+           py-3 px-6 rounded-xl font-medium text-base
+           transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .btn-fab {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90
+           w-14 h-14 rounded-full shadow-lg hover:shadow-pink
+           flex items-center justify-center
+           transform hover:scale-110 transition-all duration-200 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  /* Card Components */
+  .card-primary {
+    @apply bg-card text-card-foreground rounded-2xl shadow-lg border border-border
+           transition-all duration-200 hover:shadow-xl hover:border-primary/30;
+  }
+
+  .card-game-mode {
+    @apply bg-card/50 backdrop-blur border border-border/30 rounded-2xl p-6
+           hover:bg-card/70 hover:border-primary/50 hover:scale-[1.02]
+           transform transition-all duration-200 active:scale-[0.98]
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .card-game {
+    @apply bg-card text-card-foreground rounded-3xl shadow-2xl p-8
+           border border-border/20
+           transition-all duration-300;
+  }
+
+  /* Input Components */
+  .input-primary {
+    @apply bg-card/90 backdrop-blur rounded-xl px-4 py-3
+           text-foreground placeholder-muted-foreground
+           border border-border focus:border-primary focus:ring-2 focus:ring-primary/20
+           transition-all duration-200
+           focus:outline-none focus:bg-card;
+  }
+
+  .input-player {
+    @apply bg-card/90 backdrop-blur rounded-xl px-4 py-3
+           text-foreground placeholder-muted-foreground
+           border border-border focus:border-primary focus:ring-2 focus:ring-primary/20
+           transition-all duration-200
+           focus:outline-none focus:bg-card;
+  }
+
+  /* Feedback Components */
+  .feedback-emoji {
+    @apply p-4 rounded-2xl transition-all transform hover:scale-110 active:scale-95
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background;
+  }
+
+  .feedback-emoji-selected {
+    @apply bg-primary/20 border-2 border-primary shadow-pink scale-110;
+  }
+
+  .feedback-emoji-unselected {
+    @apply bg-secondary/50 backdrop-blur hover:bg-secondary/70 border border-border;
+  }
+
+  /* Layout Components */
+  .container-mobile {
+    @apply max-w-md mx-auto px-6;
+  }
+
+  .section-spacing {
+    @apply py-8 space-y-6;
+  }
+
+  .gradient-party {
+    @apply bg-gradient-to-br from-primary via-primary/80 to-secondary;
+  }
+
+  .gradient-game {
+    @apply bg-gradient-to-br from-gray-900 via-primary/10 to-secondary;
+  }
+
+  /* Animation Classes */
+  .animate-bounce-slow {
+    animation: bounce 3s infinite;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+
+  /* Utility Classes */
+  .glass {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent;
+  }
+
+  .shadow-glow {
+    box-shadow: 0 0 20px rgb(255 78 184 / 0.3);
+  }
+
+  .shadow-glow-lg {
+    box-shadow: 0 0 40px rgb(255 78 184 / 0.4);
+  }
+}
+
+@layer utilities {
+  /* Custom Animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Accessibility Utilities */
+  .focus-visible:focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Mobile-specific utilities */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .tap-highlight-none {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
