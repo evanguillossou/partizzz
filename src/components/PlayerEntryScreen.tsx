@@ -49,6 +49,14 @@ const PlayerEntryScreen = () => {
       <div className="container-mobile section-spacing">
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
+          {/* Logo Partiz centré */}
+          <div className="flex justify-center mb-6">
+            <img
+              src="/lovable-uploads/609e73fd-d36b-480a-b409-7ef6119bdc26.png"
+              alt="Partiz"
+              className="h-20 w-auto object-contain"
+            />
+          </div>
           <h1 className="text-display-md text-white mb-2">Qui joue ? 🎭</h1>
           <p className="text-body-md text-white/80">Ajoutez 2 à 10 joueurs pour commencer !</p>
         </div>
