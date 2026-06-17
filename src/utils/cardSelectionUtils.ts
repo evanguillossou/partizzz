@@ -128,6 +128,14 @@ export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): b
 
   if (playerCount === 2) {
     if (card.isVote) return false;
+
+    // Cartes pensées pour un groupe (≥3 joueurs) : tour de table, vote ou
+    // jugement collectif. Elles n'ont aucun sens à 2 ("le groupe juge" = 1 seule
+    // personne, un "tour de table" à 2 n'en est pas un). On les exclut.
+    const groupOnly =
+      /tour de table|en cercle|votez|votent|vote pour (le|la|qui|celui|celle)|tout le monde (vote|pointe|désigne|montre|choisit)|(le |du |au |selon le )groupe (juge|vote|valide|note|décide|doit|choisit|désigne|tranche)/i;
+    if (groupOnly.test(card.content)) return false;
+
     const problematicDistribution =
       /distribue.*à qui tu veux(?!.*toi)/i.test(card.content) &&
       !card.content.includes('tout le monde') &&
