@@ -79,19 +79,23 @@ const PaymentScreen = () => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
-                <span>Plus de 1000 cartes exclusives</span>
+                <span>Cartes exclusives, rares & intenses</span>
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
-                <span>Tous les modes de jeu débloqués</span>
+                <span>Intensité maximale (niveaux 4 & 5)</span>
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
-                <span>Nouveaux contenus chaque mois</span>
+                <span>Mode "T'as la réf" & questions deep</span>
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
-                <span>Support prioritaire</span>
+                <span>Parties 2× plus longues</span>
+              </div>
+              <div className="flex items-center space-x-3 text-white/90">
+                <span className="text-green-400 text-xl">✓</span>
+                <span>Nouvelles cartes en priorité</span>
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>

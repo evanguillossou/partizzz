@@ -5,6 +5,7 @@ import { useCards } from '../hooks/useSupabaseCards';
 import { useSubscription } from '../hooks/useSubscription';
 import { insertPlayerNames, getAvailableCardsFromSupabase } from '../utils/gameUtils';
 import { selectOptimalCards } from '../utils/cardSelectionUtils';
+import { FREE_GAME_LENGTH, getGameLength } from '../config/freemium';
 
 const GameScreen = () => {
   const { gameSession, setGameSession, setCurrentScreen, players, relationships } = useGame();
@@ -13,7 +14,7 @@ const GameScreen = () => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [availableCards, setAvailableCards] = useState<any[]>([]);
-  const [totalGameCards, setTotalGameCards] = useState(20);
+  const [totalGameCards, setTotalGameCards] = useState(FREE_GAME_LENGTH);
   const [playerTargetCounts, setPlayerTargetCounts] = useState<Record<string, number>>({});
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
@@ -29,6 +30,11 @@ const GameScreen = () => {
       setPlayerTargetCounts(initialCounts);
     }
   }, [players]);
+
+  // Longueur de partie selon le palier (gratuit court / premium long)
+  useEffect(() => {
+    setTotalGameCards(getGameLength(subscribed || false));
+  }, [subscribed]);
 
   useEffect(() => {
     const loadCards = async () => {

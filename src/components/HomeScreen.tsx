@@ -86,15 +86,15 @@ const HomeScreen = () => {
               <div className="space-y-4 text-left">
                 <div className="flex items-center space-x-3 text-white/90">
                   <span className="text-2xl">🔓</span>
-                  <span className="text-sm">Débloque tous les modes</span>
+                  <span className="text-sm">Débloque tous les modes de jeu</span>
                 </div>
                 <div className="flex items-center space-x-3 text-white/90">
                   <span className="text-2xl">🃏</span>
-                  <span className="text-sm">Plus de 1000 cartes exclusives</span>
+                  <span className="text-sm">Des cartes exclusives, rares & intenses</span>
                 </div>
                 <div className="flex items-center space-x-3 text-white/90">
                   <span className="text-2xl">🆕</span>
-                  <span className="text-sm">Ajout régulier de contenu</span>
+                  <span className="text-sm">Nouvelles cartes ajoutées régulièrement</span>
                 </div>
               </div>
               

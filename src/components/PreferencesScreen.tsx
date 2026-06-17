@@ -1,28 +1,54 @@
 import React, { useState } from 'react';
 import { useGame } from '../contexts/GameContext';
+import { useSubscription } from '../hooks/useSubscription';
 import { Slider } from './ui/slider';
+import {
+  FREE_MAX_INTENSITY,
+  PREMIUM_MAX_INTENSITY,
+  clampIntensityForTier,
+} from '../config/freemium';
 
 const PreferencesScreen = () => {
   const { players, setCurrentScreen, setGameSession, relationships } = useGame();
+  const { subscribed } = useSubscription();
   const [sexualLevel, setSexualLevel] = useState([2]);
   const [alcoholLevel, setAlcoholLevel] = useState([2]);
-  const [votes, setVotes] = useState(players.length > 2);
+  const [votes, setVotes] = useState(false);
   const [deepQuestions, setDeepQuestions] = useState(false);
   const [refMode, setRefMode] = useState(false);
 
   const isCouple = players.length === 2;
+  const isPremium = !!subscribed;
+  const maxIntensity = isPremium ? PREMIUM_MAX_INTENSITY : FREE_MAX_INTENSITY;
 
   const hasConfiguredRelationships = Object.keys(relationships).length > 0;
 
-  const buildPreferences = (overrides: Record<string, unknown> = {}) => ({
-    sexualLevel: sexualLevel[0],
-    alcoholLevel: alcoholLevel[0],
-    deepQuestions: deepQuestions,
-    votes: votes,
-    discovery: false,
-    refMode: refMode,
-    ...overrides,
-  });
+  const goPremium = () => setCurrentScreen('payment');
+
+  // Construit les préférences en appliquant les plafonds du palier gratuit.
+  const buildPreferences = (overrides: Record<string, unknown> = {}) => {
+    const base = {
+      sexualLevel: clampIntensityForTier(sexualLevel[0], isPremium),
+      alcoholLevel: clampIntensityForTier(alcoholLevel[0], isPremium),
+      deepQuestions,
+      votes,
+      discovery: false,
+      refMode,
+      ...overrides,
+    };
+    // Filet de sécurité : les fonctionnalités premium ne passent jamais en gratuit
+    if (!isPremium) {
+      base.refMode = false;
+      // deep/votes de groupe restent premium ; les overrides couple (deep/discovery) sont préservés
+      if (!isCouple) {
+        base.deepQuestions = false;
+        base.votes = false;
+      }
+      base.sexualLevel = clampIntensityForTier(base.sexualLevel as number, false);
+      base.alcoholLevel = clampIntensityForTier(base.alcoholLevel as number, false);
+    }
+    return base;
+  };
 
   const handleStartGame = () => {
     setGameSession({
@@ -67,6 +93,60 @@ const PreferencesScreen = () => {
     return labels[level] || 'Modéré';
   };
 
+  // Toggle de groupe avec gating premium. Si verrouillé, le tap renvoie à l'abonnement.
+  // Classes Tailwind écrites en entier (pas d'interpolation) pour survivre au purge.
+  const ACCENTS: Record<string, { ring: string; dot: string }> = {
+    yellow: { ring: 'ring-2 ring-yellow-400', dot: 'bg-yellow-400 border-yellow-400' },
+    purple: { ring: 'ring-2 ring-purple-400', dot: 'bg-purple-400 border-purple-400' },
+    blue: { ring: 'ring-2 ring-blue-400', dot: 'bg-blue-400 border-blue-400' },
+  };
+
+  const PremiumToggle: React.FC<{
+    icon: string;
+    title: string;
+    subtitle: string;
+    active: boolean;
+    accent: 'yellow' | 'purple' | 'blue';
+    onToggle: () => void;
+  }> = ({ icon, title, subtitle, active, accent, onToggle }) => {
+    const locked = !isPremium;
+    const a = ACCENTS[accent];
+    return (
+      <button
+        onClick={locked ? goPremium : onToggle}
+        className={`card-game-mode p-6 w-full text-left transition-all duration-200 tap-highlight-none ${
+          active ? a.ring : ''
+        } ${locked ? 'opacity-80' : ''}`}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <span className="text-2xl">{icon}</span>
+            <div>
+              <h3 className="text-heading-lg text-white flex items-center gap-2">
+                {title}
+                {locked && (
+                  <span className="text-[10px] bg-yellow-400 text-black font-bold px-1.5 py-0.5 rounded-full">
+                    PREMIUM
+                  </span>
+                )}
+              </h3>
+              <p className="text-body-sm text-white/70">{subtitle}</p>
+            </div>
+          </div>
+          {locked ? (
+            <span className="text-yellow-400 text-lg">🔒</span>
+          ) : (
+            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+              active ? a.dot : 'border-white/40'
+            }`}>
+              {active && <div className="w-2 h-2 bg-black rounded-full" />}
+            </div>
+          )}
+        </div>
+      </button>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-black p-6">
       <div className="container-mobile section-spacing">
@@ -80,32 +160,16 @@ const PreferencesScreen = () => {
 
         <div className="space-y-8 mb-8 animate-slide-up">
 
-          {/* Ref mode — plein écran si activé */}
+          {/* Ref mode — groupes, premium */}
           {!isCouple && (
-            <button
-              onClick={() => setRefMode(!refMode)}
-              className={`card-game-mode p-6 w-full text-left transition-all duration-200 tap-highlight-none ${
-                refMode ? 'ring-2 ring-yellow-400' : ''
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <span className="text-2xl">🎯</span>
-                  <div>
-                    <h3 className="text-heading-lg text-white">
-                      T'as la réf{' '}
-                      <span className="text-xs text-yellow-400 font-normal ml-1">MODE BATTLE</span>
-                    </h3>
-                    <p className="text-body-sm text-white/70">Que des battles de culture pop et memes</p>
-                  </div>
-                </div>
-                <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  refMode ? 'bg-yellow-400 border-yellow-400' : 'border-white/40'
-                }`}>
-                  {refMode && <div className="w-2 h-2 bg-black rounded-full" />}
-                </div>
-              </div>
-            </button>
+            <PremiumToggle
+              icon="🎯"
+              title="T'as la réf"
+              subtitle="Que des battles de culture pop et memes"
+              active={refMode}
+              accent="yellow"
+              onToggle={() => setRefMode(!refMode)}
+            />
           )}
 
           {/* Sliders — masqués en ref mode */}
@@ -123,15 +187,20 @@ const PreferencesScreen = () => {
                 <Slider
                   value={alcoholLevel}
                   onValueChange={setAlcoholLevel}
-                  max={5}
+                  max={maxIntensity}
                   min={0}
                   step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-white/50 mt-2">
                   <span>Sobre</span>
-                  <span>Party hard</span>
+                  <span>{isPremium ? 'Party hard' : 'Modéré'}</span>
                 </div>
+                {!isPremium && (
+                  <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
+                    🔒 Niveaux Élevé & Maximum avec Premium →
+                  </button>
+                )}
               </div>
 
               {/* Sexual Level */}
@@ -146,70 +215,49 @@ const PreferencesScreen = () => {
                 <Slider
                   value={sexualLevel}
                   onValueChange={setSexualLevel}
-                  max={5}
+                  max={maxIntensity}
                   min={0}
                   step={1}
                   className="w-full"
                 />
                 <div className="flex justify-between text-xs text-white/50 mt-2">
                   <span>Aucune</span>
-                  <span>Maximum</span>
+                  <span>{isPremium ? 'Maximum' : 'Modéré'}</span>
                 </div>
+                {!isPremium && (
+                  <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
+                    🔒 Cartes intenses (niv. 4-5) avec Premium →
+                  </button>
+                )}
               </div>
 
-              {/* Deep questions toggle — groupes uniquement */}
+              {/* Deep questions toggle — groupes, premium */}
               {!isCouple && (
-                <button
-                  onClick={() => setDeepQuestions(!deepQuestions)}
-                  className={`card-game-mode p-6 w-full text-left transition-all duration-200 tap-highlight-none ${
-                    deepQuestions ? 'ring-2 ring-purple-400' : ''
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-2xl">🌊</span>
-                      <div>
-                        <h3 className="text-heading-lg text-white">Questions profondes</h3>
-                        <p className="text-body-sm text-white/70">Inclure les questions deep et introspectives</p>
-                      </div>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      deepQuestions ? 'bg-purple-400 border-purple-400' : 'border-white/40'
-                    }`}>
-                      {deepQuestions && <div className="w-2 h-2 bg-black rounded-full" />}
-                    </div>
-                  </div>
-                </button>
+                <PremiumToggle
+                  icon="🌊"
+                  title="Questions profondes"
+                  subtitle="Inclure les questions deep et introspectives"
+                  active={deepQuestions}
+                  accent="purple"
+                  onToggle={() => setDeepQuestions(!deepQuestions)}
+                />
               )}
 
-              {/* Votes toggle — groupes uniquement */}
+              {/* Votes toggle — groupes 3+, premium */}
               {!isCouple && players.length >= 3 && (
-                <button
-                  onClick={() => setVotes(!votes)}
-                  className={`card-game-mode p-6 w-full text-left transition-all duration-200 tap-highlight-none ${
-                    votes ? 'ring-2 ring-blue-400' : ''
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                      <span className="text-2xl">🗳️</span>
-                      <div>
-                        <h3 className="text-heading-lg text-white">Cartes votes de groupe</h3>
-                        <p className="text-body-sm text-white/70">Inclure les questions "qui dans le groupe..."</p>
-                      </div>
-                    </div>
-                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                      votes ? 'bg-blue-400 border-blue-400' : 'border-white/40'
-                    }`}>
-                      {votes && <div className="w-2 h-2 bg-black rounded-full" />}
-                    </div>
-                  </div>
-                </button>
+                <PremiumToggle
+                  icon="🗳️"
+                  title="Cartes votes de groupe"
+                  subtitle={'Inclure les questions "qui dans le groupe..."'}
+                  active={votes}
+                  accent="blue"
+                  onToggle={() => setVotes(!votes)}
+                />
               )}
             </>
           )}
 
-          {/* Pour les couples : boutons de modes de jeu */}
+          {/* Pour les couples : boutons de modes de jeu (deep / découverte restent gratuits) */}
           {isCouple ? (
             <>
               <button
@@ -253,6 +301,19 @@ const PreferencesScreen = () => {
             </>
           ) : null}
         </div>
+
+        {/* Bandeau premium discret pour les non-abonnés */}
+        {!isPremium && (
+          <button
+            onClick={goPremium}
+            className="w-full mb-4 bg-gradient-to-r from-yellow-500/10 to-pink-500/10 border border-yellow-400/30 rounded-xl p-4 text-center tap-highlight-none hover:border-yellow-400/50 transition-colors"
+          >
+            <p className="text-yellow-400 text-sm font-semibold">💎 Passe en Premium</p>
+            <p className="text-white/60 text-xs mt-1">
+              Cartes intenses, T'as la réf, questions deep, parties plus longues
+            </p>
+          </button>
+        )}
 
         {/* Action buttons */}
         <div className="space-y-4 animate-slide-up">
