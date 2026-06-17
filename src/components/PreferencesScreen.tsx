@@ -160,18 +160,6 @@ const PreferencesScreen = () => {
 
         <div className="space-y-8 mb-8 animate-slide-up">
 
-          {/* Ref mode — groupes, premium */}
-          {!isCouple && (
-            <PremiumToggle
-              icon="🎯"
-              title="T'as la réf"
-              subtitle="Que des battles de culture pop et memes"
-              active={refMode}
-              accent="yellow"
-              onToggle={() => setRefMode(!refMode)}
-            />
-          )}
-
           {/* Sliders — masqués en ref mode */}
           {!refMode && (
             <>
@@ -255,6 +243,18 @@ const PreferencesScreen = () => {
                 />
               )}
             </>
+          )}
+
+          {/* T'as la réf — groupes, premium (en bas, juste avant le bandeau premium) */}
+          {!isCouple && (
+            <PremiumToggle
+              icon="🎯"
+              title="T'as la réf"
+              subtitle="Que des battles de culture pop et memes"
+              active={refMode}
+              accent="yellow"
+              onToggle={() => setRefMode(!refMode)}
+            />
           )}
 
           {/* Pour les couples : boutons de modes de jeu (deep / découverte restent gratuits) */}
