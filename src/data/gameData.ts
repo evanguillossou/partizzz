@@ -2467,6 +2467,581 @@ const newCards: Card[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
+// CARTES V3 — gros lot d'expansion (volume + rejouabilité)
+// Même ligne éditoriale : spontané, drôle, tension sociale, sans sur-explication.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const cardsV3: Card[] = [
+  // ── CASUAL / FUN (libres) ──────────────────────────────────────────────────
+  {
+    id: 'v3_casual_01',
+    content: "{player1}, tu as 15 secondes pour faire deviner un film au groupe en mimant uniquement le titre. Raté = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_02',
+    content: "Tout le monde lève son verre. Le dernier à le faire boit 1 gorgée. Pas de pitié.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_03',
+    content: "{player1}, raconte la pire excuse que tu aies utilisée pour annuler un plan. Le groupe note sur 10. En dessous de 5 = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_04',
+    content: "{player1} choisit deux personnes du groupe. Elles ont 20 secondes pour trouver un point commun improbable. Raté = 1 gorgée chacune.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_05',
+    content: "Règle temporaire : à partir de maintenant, tout le monde doit dire 'à votre santé' avant de boire. Premier qui oublie = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_06',
+    content: "{player1}, imite quelqu'un du groupe sans dire qui. Les autres devinent. Personne ne trouve = 2 gorgées pour toi.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_07',
+    content: "Tout le monde sort son téléphone. Le dernier emoji utilisé en dit long : celui dont l'emoji est le plus chelou distribue 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_08',
+    content: "{player1}, tu as 10 secondes pour citer 5 marques de bière. Raté = bois-en une (gorgée, on est raisonnables).",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_09',
+    content: "{player1}, décris ta journée d'hier en trois emojis à voix haute. Le groupe doit deviner ce que t'as fait. Raté = 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_10',
+    content: "Concours de regards : {player1} contre {player2}. Premier qui rigole ou cligne trop boit 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_11',
+    content: "{player1}, invente un nom de cocktail à partir de ta dernière mésaventure. Pas drôle selon le groupe = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_12',
+    content: "Tout le monde pointe la personne qui rentrerait le plus vite chez elle s'il commençait à pleuvoir. Cette personne distribue 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_13',
+    content: "{player1}, parle pendant 20 secondes d'un sujet random que le groupe te donne — sans aucune pause. Tu bloques = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_14',
+    content: "{player1}, montre la dernière photo de ton appareil photo (pas de tri). Trop banale = ouf. Trop gênante = 2 gorgées au choix du groupe.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_15',
+    content: "Tout le monde compte jusqu'à 3 et pointe la personne la plus en retard d'habitude. Majorité = cette personne boit 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isVote: true,
+  },
+  {
+    id: 'v3_casual_16',
+    content: "{player1}, tu as 30 secondes pour faire un compliment sincère à la personne à ta droite. Cliché = 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_17',
+    content: "{player1}, raconte une fois où t'as cru être trop classe et où t'as fini ridicule. Le groupe juge. Pas assez drôle = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_18',
+    content: "Mini-jeu : tout le monde dit un mot à tour de rôle pour construire une histoire. Celui qui casse le rythme ou répète boit 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_19',
+    content: "{player1}, choisis quelqu'un : vous échangez vos vies pendant 24h. Dis la première chose que tu ferais. Le groupe valide ou te fait boire 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_20',
+    content: "Tout le monde tape sur la table en rythme. {player1} lance un tempo de plus en plus rapide. Le premier qui se rate boit 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_21',
+    content: "{player1}, fais le bruitage le plus convaincant possible d'un objet que le groupe te désigne. Pas crédible = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_casual_22',
+    content: "{player1}, sans regarder ton téléphone : cite 3 personnes que t'as appelées en dernier. Tu te trompes = 2 gorgées (vérifie après).",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+
+  // ── DRINKING (libres) ───────────────────────────────────────────────────────
+  {
+    id: 'v3_drink_01',
+    content: "{player1}, bois 1 gorgée pour chaque alarme réglée sur ton téléphone le matin. Honnêteté totale.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_02',
+    content: "Qui a déjà fait semblant d'être au téléphone pour éviter quelqu'un dans la rue ? Ces personnes boivent 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_03',
+    content: "{player1}, bois autant de gorgées que le nombre de séries que tu as abandonnées en cours de saison. Max 4.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_04',
+    content: "Tout le monde qui a déjà retourné dormir après avoir éteint son réveil 'juste 5 minutes' boit 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_05',
+    content: "{player1}, si t'as déjà liké un post par accident et vite déliké en priant que personne ait vu, bois 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_06',
+    content: "Qui dans cette pièce a déjà pleuré devant un film d'animation ? Mains levées = 1 gorgée et aucune honte.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_07',
+    content: "{player1}, bois 1 gorgée pour chaque fois cette semaine où t'as dit 'je commence demain'. Sois honnête.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_08',
+    content: "Tout le monde qui a un onglet ouvert depuis plus d'une semaine 'pour plus tard' boit 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_09',
+    content: "{player1}, si ton panier d'achats en ligne contient un truc que t'as jamais commandé depuis plus d'un mois, bois 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_10',
+    content: "Qui a déjà répété une histoire en oubliant que c'était à la même personne qu'il l'avait déjà racontée ? 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_11',
+    content: "{player1}, bois pour chaque playlist que t'as commencée et jamais finie. Max 3 gorgées. On te juge pas (un peu).",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_12',
+    content: "Tout le monde qui a déjà fait semblant de comprendre une blague pour pas avoir à demander boit 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_13',
+    content: "{player1}, si t'as déjà parlé à voix haute tout seul en te répétant une conversation que t'aurais dû avoir, bois 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_14',
+    content: "Qui a déjà acheté un truc juste parce qu'il était en promo alors qu'il en avait pas besoin ? 1 gorgée par fois, max 3.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_15',
+    content: "{player1}, désigne la personne du groupe qui a le plus de chances d'avoir 40 onglets ouverts là maintenant. Elle vérifie. Faux = tu bois 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_16',
+    content: "Tout le monde qui s'est déjà perdu en allant quelque part où il était pourtant déjà allé boit 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_17',
+    content: "{player1}, bois autant de gorgées que le nombre de fois où t'as relu un message avant de l'envoyer aujourd'hui. Max 4.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_drink_18',
+    content: "Qui a déjà fait semblant d'avoir lu un livre dont tout le monde parlait ? 2 gorgées, et personne ne dénonce.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false,
+  },
+
+  // ── DEEP (libres) ───────────────────────────────────────────────────────────
+  {
+    id: 'v3_deep_01',
+    content: "{player1}, qu'est-ce que tu as appris sur toi cette année que tu n'aurais pas cru possible ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'friend', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_02',
+    content: "{player1}, à quel moment t'as senti que tu étais devenu adulte — pas l'âge, le déclic ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_03',
+    content: "Tour de table : chacun dit une chose qu'il a longtemps prise pour une faiblesse et qu'il voit aujourd'hui comme une force.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'friend', isDeep: true, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_04',
+    content: "{player1}, qu'est-ce que tu ferais de tes journées si l'argent n'était plus jamais un problème ? Sois précis.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_05',
+    content: "{player1}, quelle conversation tu aimerais pouvoir avoir avec quelqu'un que tu ne peux plus joindre ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_06',
+    content: "{player1}, qu'est-ce qui te fait te sentir vraiment vivant, au point d'oublier l'heure ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_07',
+    content: "Tour de table : chacun nomme une peur qu'il avait enfant et dit si elle l'a vraiment quitté.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'friend', isDeep: true, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_08',
+    content: "{player1}, si tu devais transmettre une seule leçon à quelqu'un qui démarre dans la vie, ce serait laquelle ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_09',
+    content: "{player1}, qu'est-ce que tu repousses sans cesse alors que tu sais que ça compte vraiment pour toi ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'friend', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_10',
+    content: "{player1}, dans quel moment récent tu t'es senti reconnaissant sans l'avoir dit à personne ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_11',
+    content: "Tour de table : chacun dit ce qu'il espère que les gens retiendront de lui. Personne ne commente, on écoute.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_12',
+    content: "{player1}, qu'est-ce qui a changé dans ta façon d'aimer les gens depuis tes 18 ans ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'friend', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_13',
+    content: "{player1}, quelle décision tu as prise par peur et que tu regrettes un peu aujourd'hui ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+  {
+    id: 'v3_deep_14',
+    content: "{player1}, c'est quoi le plus beau truc que quelqu'un a fait pour toi sans rien attendre en retour ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'compatible', explicitlySexual: false,
+  },
+
+  // ── COUPLE / DATE (libres) ──────────────────────────────────────────────────
+  {
+    id: 'v3_date_01',
+    content: "{player1}, c'est quoi le premier truc que t'as remarqué chez {player2} ? Sois honnête.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_02',
+    content: "{player1}, décris ton week-end idéal avec {player2} en une phrase. Pas de filtre.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_03',
+    content: "{player1} et {player2}, posez-vous la même question en même temps. Si c'est la même, vous trinquez. Sinon répondez chacun.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_04',
+    content: "{player1}, qu'est-ce que tu aimerais que {player2} sache sur toi mais que tu n'oses pas encore dire ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_05',
+    content: "{player1}, complète : 'Si on se revoit, j'aimerais qu'on...' — adressé à {player2}.",
+    alcoholLevel: 0, sexualLevel: 1, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_06',
+    content: "{player1}, raconte à {player2} un truc dont tu es secrètement fier mais dont tu parles jamais.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_07',
+    content: "{player1}, devine la chanson que {player2} mettrait pour se remonter le moral. Faux = 1 gorgée, juste = {player2} boit.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_08',
+    content: "{player1}, qu'est-ce qui te ferait craquer chez quelqu'un — un détail, pas un cliché ? Regarde {player2} en le disant.",
+    alcoholLevel: 1, sexualLevel: 1, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_09',
+    content: "{player1} et {player2}, dites chacun un mot pour décrire l'ambiance de cette soirée. Mots différents = 1 gorgée chacun.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_10',
+    content: "{player1}, si tu devais offrir un truc à {player2} demain sans te ruiner, ce serait quoi et pourquoi ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_11',
+    content: "{player1}, raconte ton souvenir le plus gênant en espérant que {player2} fasse pareil. Refus = 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_12',
+    content: "{player1}, qu'est-ce que t'as kiffé dans cette soirée jusqu'à maintenant ? {player2} doit deviner avant que tu répondes.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_13',
+    content: "{player1}, décris {player2} dans 5 ans comme tu l'imagines. {player2} dit si ça lui plairait.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'stranger', isDeep: true, dateMode: 'exclusive', explicitlySexual: false,
+  },
+  {
+    id: 'v3_date_14',
+    content: "{player1}, complète en regardant {player2} : 'Ce qui me rend curieux/curieuse à propos de toi, c'est...'",
+    alcoholLevel: 0, sexualLevel: 1, proximityLevel: 'stranger', isDeep: true, dateMode: 'exclusive', explicitlySexual: false,
+  },
+
+  // ── T'AS LA RÉF (libres) ────────────────────────────────────────────────────
+  {
+    id: 'v3_ref_01',
+    content: "🎯 BATTLE : Premier à citer 3 dessins animés du Club Dorothée. Loser : 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_02',
+    content: "🎯 BATTLE : {player1} chante les 3 premières secondes d'un générique de dessin animé. {player2} a 10 secondes pour trouver. Raté = 2 gorgées. Inversez.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_03',
+    content: "🎯 BATTLE : Premier à nommer le youtubeur derrière la phrase culte 'Salut les amis'. Plusieurs réponses possibles, le groupe valide. Loser : 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_04',
+    content: "🎯 BATTLE : Premier à citer 4 émissions de téléréalité françaises. Loser : 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_05',
+    content: "🎯 BATTLE : {player1} mime un personnage de Disney sans parler. {player2} a 15 secondes. Raté = 2 gorgées. Inversez.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_06',
+    content: "🎯 BATTLE : Premier à finir la phrase 'Avec un nom comme ça...' (la pub) ou à citer une autre pub culte au choix validée par le groupe. Loser : 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_07',
+    content: "🎯 BATTLE : Premier à nommer 3 jeux vidéo sortis sur la première PlayStation. Loser : 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_08',
+    content: "🎯 BATTLE : {player1} cite une réplique de film français culte. {player2} nomme le film en 10 secondes. Raté = 2 gorgées. Inversez.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_09',
+    content: "🎯 BATTLE : Premier à nommer 4 super-héros qui ne font PAS partie des Avengers. Loser : 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_10',
+    content: "🎯 BATTLE : Premier à citer 3 chanteuses françaises actuelles. Loser : 1 gorgée.",
+    alcoholLevel: 1, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_11',
+    content: "🎯 BATTLE : {player1} décrit un jeu vidéo culte sans le nommer. {player2} a 15 secondes pour trouver. Raté = 2 gorgées. Inversez.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+  {
+    id: 'v3_ref_12',
+    content: "🎯 BATTLE : Premier à nommer 3 films d'animation Pixar dans l'ordre de sortie. Loser : 2 gorgées.",
+    alcoholLevel: 2, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true,
+  },
+
+  // ── PREMIUM — FUN / INTENSE ─────────────────────────────────────────────────
+  {
+    id: 'v3_prem_fun_01',
+    content: "{player1}, lis à voix haute le dernier message que t'as envoyé à la personne la plus importante de ton téléphone. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_02',
+    content: "Tout le monde sort son téléphone. {player1} choisit une personne qui doit montrer sa dernière recherche. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_03',
+    content: "{player1}, raconte le truc le plus illégal-mais-pas-grave que t'as déjà fait. Trop sage selon le groupe = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_04',
+    content: "Tour de table : chacun avoue un mensonge qu'il maintient encore aujourd'hui auprès de sa famille. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'close', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_05',
+    content: "{player1}, montre ton historique de likes des 5 derniers posts à la personne de ton choix. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 1, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_06',
+    content: "Tout le monde vote pour la personne qui a le plus de secrets bien gardés. Cette personne en lâche un ou boit 4 gorgées.",
+    alcoholLevel: 4, sexualLevel: 0, proximityLevel: 'close', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true, isVote: true,
+  },
+  {
+    id: 'v3_prem_fun_07',
+    content: "{player1}, appelle (vraiment) la 3e personne de tes appels récents et dis-lui un truc gentil et random. Refus = 4 gorgées.",
+    alcoholLevel: 4, sexualLevel: 0, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_fun_08',
+    content: "{player1}, le groupe te pose une question. Tu dois répondre la vérité ou boire 3 gorgées. Pas de demi-mesure.",
+    alcoholLevel: 3, sexualLevel: 1, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+
+  // ── PREMIUM — DEEP ──────────────────────────────────────────────────────────
+  {
+    id: 'v3_prem_deep_01',
+    content: "{player1}, quelle est la chose la plus difficile que tu traverses en ce moment et dont tu parles à presque personne ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'compatible', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_deep_02',
+    content: "Tour de table : chacun dit à une personne du groupe ce qu'il admire vraiment chez elle et qu'il ne lui a jamais dit.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_deep_03',
+    content: "{player1}, quel pardon tu n'arrives pas à accorder — à quelqu'un ou à toi-même ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_deep_04',
+    content: "{player1}, si ce soir était le dernier avec ces gens, qu'est-ce que tu aurais besoin de leur dire ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_deep_05',
+    content: "{player1}, quelle part de toi tu as sacrifiée pour être accepté quelque part, et est-ce que ça valait le coup ?",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'compatible', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_deep_06',
+    content: "Tour de table : chacun nomme la personne (présente ou non) qui l'a le plus changé, et dit comment. Personne ne coupe.",
+    alcoholLevel: 0, sexualLevel: 0, proximityLevel: 'close', isDeep: true, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+
+  // ── PREMIUM — SEXUEL ────────────────────────────────────────────────────────
+  {
+    id: 'v3_prem_sx_01',
+    content: "{player1}, le lieu le plus risqué où t'as déjà eu envie de quelqu'un — juste le lieu, pas plus. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 3, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_02',
+    content: "{player1}, sur une échelle de 1 à 10, à quel point t'es à l'aise pour parler de sexe ? Annonce, puis le groupe te teste avec une question.",
+    alcoholLevel: 3, sexualLevel: 3, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_03',
+    content: "{player1}, ton plus gros 'ick' au lit (le truc qui te coupe direct) — une phrase. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 4, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_04',
+    content: "Tout le monde vote : qui a probablement la story la plus folle d'un soir ? Cette personne raconte les grandes lignes ou boit 4 gorgées.",
+    alcoholLevel: 4, sexualLevel: 4, proximityLevel: 'close', isDeep: false, dateMode: 'no', explicitlySexual: true, isPremium: true, isVote: true,
+  },
+  {
+    id: 'v3_prem_sx_05',
+    content: "{player1}, la chose la plus audacieuse que t'as proposée ou qu'on t'a proposée — juste un mot-clé. Refus = 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 4, proximityLevel: 'close', isDeep: false, dateMode: 'no', explicitlySexual: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_06',
+    content: "{player1}, complète : 'Ce qui m'attire vraiment chez quelqu'un, au-delà du physique, c'est...' — sois précis.",
+    alcoholLevel: 2, sexualLevel: 3, proximityLevel: 'friend', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_07',
+    content: "{player1}, tu poses LA question que tu n'oserais jamais poser à {player2}. {player2} répond ou boit 4 gorgées.",
+    alcoholLevel: 4, sexualLevel: 3, proximityLevel: 'friend', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_08',
+    content: "{player1}, ton red flag assumé en couple, et ton green flag secret — un de chaque. Honnête ou 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 2, proximityLevel: 'friend', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_09',
+    content: "{player1}, décris ton 'type' idéal sans utiliser un seul mot sur l'apparence. 30 secondes.",
+    alcoholLevel: 2, sexualLevel: 2, proximityLevel: 'friend', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isPremium: true,
+  },
+  {
+    id: 'v3_prem_sx_10',
+    content: "Tout le monde écrit (mentalement) qui dans la pièce aurait le plus de chance avec lui/elle. On compte 3, on pointe. La personne la plus pointée distribue 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 3, proximityLevel: 'close', isDeep: false, dateMode: 'no', explicitlySexual: false, isPremium: true, isVote: true,
+  },
+
+  // ── PREMIUM — T'AS LA RÉF ───────────────────────────────────────────────────
+  {
+    id: 'v3_prem_ref_01',
+    content: "🎯 BATTLE : Premier à citer 5 films de la saga Fast & Furious dans le bon ordre. Loser : 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_ref_02',
+    content: "🎯 BATTLE : {player1} lance un début de punchline rap connue. {player2} doit la finir mot pour mot. Raté = 3 gorgées. Inversez.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_ref_03',
+    content: "🎯 BATTLE : Premier à nommer 4 réalisateurs français vivants. Loser : 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_ref_04',
+    content: "🎯 BATTLE : Premier à citer 5 albums de rap français sortis ces 3 dernières années. Loser : 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_ref_05',
+    content: "🎯 BATTLE : {player1} fredonne un générique de série Netflix récente. {player2} a 10 secondes. Raté = 3 gorgées. Inversez.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+  {
+    id: 'v3_prem_ref_06',
+    content: "🎯 BATTLE : Premier à nommer 6 personnages de Harry Potter en dehors du trio principal. Loser : 3 gorgées.",
+    alcoholLevel: 3, sexualLevel: 0, proximityLevel: 'stranger', isDeep: false, dateMode: 'compatible', explicitlySexual: false, isRef: true, isPremium: true,
+  },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
 // EXPORT FINAL — toutes les cartes fusionnées
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -2477,4 +3052,5 @@ export const cards: Card[] = [
   ...funCasualCards,
   ...refCards,
   ...newCards,
+  ...cardsV3,
 ];
