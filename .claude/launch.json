@@ -6,6 +6,30 @@
       "runtimeExecutable": "/opt/homebrew/Cellar/node/18.8.0/bin/node",
       "runtimeArgs": ["node_modules/vite/bin/vite.js", "--port", "5173"],
       "port": 5173
+    },
+    {
+      "name": "quorum",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd \"/Users/Evan Guillossou/Desktop/quorum\" && export PATH=/usr/local/opt/node@20/bin:$PATH && exec npm run dev -- -p 3100"
+      ],
+      "port": 3100
+    },
+    {
+      "name": "pause-web",
+      "runtimeExecutable": "/opt/homebrew/Cellar/node/18.8.0/bin/node",
+      "runtimeArgs": ["/Users/Evan Guillossou/Desktop/Pause/server.mjs", "4321"],
+      "port": 4321
+    },
+    {
+      "name": "givrr",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": [
+        "-lc",
+        "cd \"/Users/Evan Guillossou/Desktop/givrr\" && export PATH=/usr/local/opt/node@20/bin:$PATH && exec npm run dev -- --port 8080"
+      ],
+      "port": 8080
     }
   ]
 }
