@@ -129,11 +129,12 @@ export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): b
   if (playerCount === 2) {
     if (card.isVote) return false;
 
-    // Cartes pensées pour un groupe (≥3 joueurs) : tour de table, vote ou
-    // jugement collectif. Elles n'ont aucun sens à 2 ("le groupe juge" = 1 seule
-    // personne, un "tour de table" à 2 n'en est pas un). On les exclut.
+    // Cartes pensées pour un groupe (≥3 joueurs) : tour de table, vote, jugement
+    // collectif ("le groupe juge", "selon le groupe"), désignation par majorité…
+    // Aucune ne tient à 2 (le "groupe" = une seule personne). On exclut dès qu'un
+    // marqueur collectif apparaît, peu importe la tournure de la phrase.
     const groupOnly =
-      /tour de table|en cercle|votez|votent|vote pour (le|la|qui|celui|celle)|tout le monde (vote|pointe|désigne|montre|choisit)|(le |du |au |selon le )groupe (juge|vote|valide|note|décide|doit|choisit|désigne|tranche)/i;
+      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote|\bmajorité\b|les autres (devinent|votent|jugent|notent|décident)/i;
     if (groupOnly.test(card.content)) return false;
 
     const problematicDistribution =
