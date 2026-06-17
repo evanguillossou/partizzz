@@ -2,6 +2,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/types/game';
+import { cards as localCards } from '@/data/gameData';
 
 // Hook pour récupérer toutes les cartes
 export const useCards = () => {
@@ -14,8 +15,11 @@ export const useCards = () => {
         .eq('is_active', true)
         .order('created_at', { ascending: false });
       
-      if (error) throw error;
-      
+      if (error) {
+        console.warn('Supabase inaccessible, fallback local');
+        return localCards;
+      }
+
       return data.map(card => ({
         id: card.id,
         content: card.content,
@@ -26,7 +30,8 @@ export const useCards = () => {
         proximityLevel: card.proximity_level as 'stranger' | 'friend' | 'close' | undefined,
         dateMode: card.date_mode as 'no' | 'compatible' | 'exclusive' | undefined,
         explicitlySexual: card.explicitly_sexual || false,
-        isRef: card.is_ref || false
+        isRef: card.is_ref || false,
+        isPremium: card.is_premium || false,
       })) as Card[];
     }
   });

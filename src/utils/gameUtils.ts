@@ -3,6 +3,7 @@ import { Player, Card } from '../types/game';
 import { RelationshipData } from '../types/relationships';
 import { selectOptimalCards } from './cardSelectionUtils';
 import { supabase } from '@/integrations/supabase/client';
+import { cards as localCards } from '@/data/gameData';
 
 export const shuffleArray = <T>(array: T[]): T[] => {
   const shuffled = [...array];
@@ -126,9 +127,16 @@ export const getAvailableCardsFromSupabase = async (
 
     return availableCards;
   } catch (error) {
-    console.error('Erreur lors de la récupération des cartes:', error);
-    // Fallback vers les données locales en cas d'erreur
-    return [];
+    console.warn('Supabase inaccessible, fallback local:', error);
+    // Fallback vers les données locales (gameData.ts)
+    let available = localCards.filter(card => !usedCardIds.includes(card.id));
+    if (!isSubscribed) {
+      available = available.filter(card => !card.isPremium);
+    }
+    if (gameSession.preferences && players) {
+      available = selectOptimalCards(available, gameSession.preferences, players, relationships);
+    }
+    return available;
   }
 };
 

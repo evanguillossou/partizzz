@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Trash2, Edit, Plus, Upload, ArrowLeft } from 'lucide-react';
 import { useCards, useAddCard, useUpdateCard, useDeleteCard } from '@/hooks/useSupabaseCards';
-import { migrateExistingCards } from '@/utils/migrateData';
+import { seedAllCards } from '@/utils/migrateData';
 import { Card as GameCard } from '@/types/game';
 
 interface AdminCardsScreenProps {
@@ -33,18 +33,29 @@ const AdminCardsScreen: React.FC<AdminCardsScreenProps> = ({ onBack }) => {
   const updateCardMutation = useUpdateCard();
   const deleteCardMutation = useDeleteCard();
 
-  // Migration automatique au chargement
+  // Seed automatique des nouvelles cartes au chargement de l'admin
   useEffect(() => {
-    const runMigration = async () => {
+    const runSync = async () => {
       try {
-        await migrateExistingCards();
+        await seedAllCards();
         refetch();
       } catch (error) {
-        console.error('Erreur de migration:', error);
+        console.error('Erreur de sync:', error);
       }
     };
-    runMigration();
+    runSync();
   }, [refetch]);
+
+  const handleSyncCards = async () => {
+    try {
+      toast({ title: '⏳ Synchronisation...', description: 'Injection des nouvelles cartes depuis gameData' });
+      await seedAllCards();
+      await refetch();
+      toast({ title: '✅ Sync terminée', description: 'Nouvelles cartes injectées en base' });
+    } catch (error) {
+      toast({ title: '❌ Erreur sync', description: String(error), variant: 'destructive' });
+    }
+  };
 
   const filteredCards = cards.filter(card => {
     if (filters.alcoholLevel && card.alcoholLevel?.toString() !== filters.alcoholLevel) return false;
@@ -137,6 +148,12 @@ const AdminCardsScreen: React.FC<AdminCardsScreenProps> = ({ onBack }) => {
           <Button variant="outline" className="text-white border-white hover:bg-white hover:text-purple-900">
             <Upload className="h-4 w-4 mr-2" />
             Import Excel (bientôt)
+          </Button>
+          <Button
+            onClick={handleSyncCards}
+            className="bg-yellow-600 hover:bg-yellow-700"
+          >
+            🔄 Sync nouvelles cartes
           </Button>
         </div>
 

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useGame } from '../contexts/GameContext';
 import { useCards } from '../hooks/useSupabaseCards';
 import { useSubscription } from '../hooks/useSubscription';
-import { insertPlayerNames, shuffleArray, getAvailableCardsFromSupabase } from '../utils/gameUtils';
+import { insertPlayerNames, getAvailableCardsFromSupabase } from '../utils/gameUtils';
 import { selectOptimalCards } from '../utils/cardSelectionUtils';
 
 const GameScreen = () => {
@@ -41,9 +41,9 @@ const GameScreen = () => {
             relationships,
             subscribed || false
           );
-          
-          const shuffled = shuffleArray(cards);
-          const limitedCards = shuffled.slice(0, totalGameCards);
+
+          // selectOptimalCards a déjà trié et ordonné les cartes — on ne re-shuffle pas
+          const limitedCards = cards.slice(0, totalGameCards);
           setAvailableCards(limitedCards);
           
           if (limitedCards.length > 0) {
@@ -131,8 +131,7 @@ const GameScreen = () => {
       }
       
       // Mélanger et limiter les nouvelles cartes
-      const shuffled = shuffleArray(cards);
-      const limitedCards = shuffled.slice(0, totalGameCards - gameSession.currentCardIndex);
+      const limitedCards = cards.slice(0, totalGameCards - gameSession.currentCardIndex);
       
       // Mettre à jour les cartes disponibles
       setAvailableCards(limitedCards);
@@ -336,10 +335,20 @@ const GameScreen = () => {
           >
             {cardsRemaining > 1 ? '🎯 Défi Suivant' : '🏁 Terminer le Jeu'}
           </button>
-          
-          <p className="text-caption text-white/60 text-center mt-3">
-            Appuie ou swipe ← pour la carte suivante
-          </p>
+
+          {/* Upsell Premium subtil — visible seulement pour les non-abonnés en fin de deck */}
+          {!subscribed && cardsRemaining <= 4 && cardsRemaining > 0 ? (
+            <button
+              onClick={() => setCurrentScreen('payment')}
+              className="mt-3 w-full text-center text-yellow-400/80 text-xs hover:text-yellow-400 transition-colors tap-highlight-none"
+            >
+              💎 3× plus de cartes exclusives avec Premium →
+            </button>
+          ) : (
+            <p className="text-caption text-white/60 text-center mt-3">
+              Appuie ou swipe ← pour la carte suivante
+            </p>
+          )}
         </div>
       </div>
     </div>

@@ -118,6 +118,16 @@ const HomeScreen = () => {
               Politique de confidentialité
             </Link>
           </div>
+
+          {/* Admin (DEV uniquement) */}
+          {isAdmin && (
+            <button
+              onClick={() => setShowAdmin(true)}
+              className="text-white/20 hover:text-white/40 text-xs transition-colors tap-highlight-none"
+            >
+              ⚙️ Admin
+            </button>
+          )}
         </div>
       </div>
 
