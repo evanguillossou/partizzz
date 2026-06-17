@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { checkoutUrl, hasStripeConfigured, STRIPE_PORTAL_URL } from '@/lib/premium';
 
 interface SubscriptionStatus {
   subscribed: boolean;
@@ -13,33 +14,40 @@ interface SubscriptionStatus {
 export const useSubscription = () => {
   const [status, setStatus] = useState<SubscriptionStatus>({
     subscribed: false,
-    loading: true
+    loading: true,
   });
   const { toast } = useToast();
 
+  // Lit le statut premium directement depuis la table `subscribers`
+  // (alimentée par le webhook Stripe). Pas d'Edge Function côté lecture.
   const checkSubscription = async () => {
     try {
       setStatus(prev => ({ ...prev, loading: true }));
-      
+
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setStatus({ subscribed: false, loading: false });
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('check-subscription', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
+      const { data, error } = await supabase
+        .from('subscribers')
+        .select('subscribed, subscription_tier, subscription_end')
+        .eq('user_id', session.user.id)
+        .maybeSingle();
 
       if (error) throw error;
 
+      // Abonnement valide = flag actif ET (pas de date de fin OU date future)
+      const notExpired =
+        !data?.subscription_end || new Date(data.subscription_end) > new Date();
+      const subscribed = !!data?.subscribed && notExpired;
+
       setStatus({
-        subscribed: data.subscribed || false,
-        subscription_tier: data.subscription_tier,
-        subscription_end: data.subscription_end,
-        loading: false
+        subscribed,
+        subscription_tier: data?.subscription_tier ?? undefined,
+        subscription_end: data?.subscription_end ?? undefined,
+        loading: false,
       });
     } catch (error) {
       console.error('Error checking subscription:', error);
@@ -47,120 +55,73 @@ export const useSubscription = () => {
     }
   };
 
+  // Ouvre le Payment Link Stripe avec client_reference_id = user.id.
+  // L'utilisateur doit être connecté (pour pouvoir l'identifier au retour).
   const createCheckoutSession = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         toast({
-          title: "Connexion requise",
-          description: "Vous devez être connecté pour vous abonner",
-          variant: "destructive"
+          title: 'Connexion requise',
+          description: 'Vous devez être connecté pour vous abonner',
+          variant: 'destructive',
         });
-        return { success: false };
+        return { success: false, needsAuth: true };
       }
 
-      console.log('Creating checkout session...', { userId: session.user.id, email: session.user.email });
-
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      console.log('Checkout response:', { data, error });
-
-      if (error) {
-        console.error('Supabase function error:', error);
-        throw new Error(error.message || 'Erreur lors de la création de la session');
+      if (!hasStripeConfigured()) {
+        toast({
+          title: 'Paiement indisponible',
+          description: "Le lien d'abonnement n'est pas encore configuré.",
+          variant: 'destructive',
+        });
+        return { success: false, error: 'Stripe non configuré' };
       }
 
-      if (data?.error) {
-        console.error('Checkout session error:', data.error);
-        throw new Error(data.error);
-      }
+      const url = checkoutUrl(session.user.id);
+      const newWindow = window.open(url, '_blank');
 
-      if (data?.url) {
-        console.log('Redirecting to checkout:', data.url);
-        
-        // Essayer d'ouvrir dans un nouvel onglet d'abord
-        const newWindow = window.open(data.url, '_blank');
-        
-        // Si le popup est bloqué, proposer d'ouvrir dans la même fenêtre
-        if (!newWindow || newWindow.closed || typeof newWindow.closed == 'undefined') {
-          console.warn('Popup bloqué par le navigateur, redirection dans la même fenêtre');
-          
-          // Demander confirmation avant de rediriger dans la même fenêtre
-          const confirmRedirect = confirm(
-            'Le popup a été bloqué par votre navigateur. Voulez-vous ouvrir Stripe dans cette fenêtre ? (Vous pourrez revenir en arrière après le paiement)'
-          );
-          
-          if (confirmRedirect) {
-            window.location.href = data.url;
-          } else {
-            toast({
-              title: "Popup bloqué",
-              description: "Veuillez autoriser les popups pour ce site ou cliquer à nouveau pour ouvrir dans cette fenêtre",
-              variant: "destructive"
-            });
-            return { success: false, error: 'Popup bloqué par le navigateur' };
-          }
+      // Popup bloqué → fallback même fenêtre après confirmation
+      if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+        const confirmRedirect = confirm(
+          'Le popup a été bloqué. Voulez-vous ouvrir la page de paiement dans cette fenêtre ?'
+        );
+        if (confirmRedirect) {
+          window.location.href = url;
+        } else {
+          return { success: false, error: 'Popup bloqué par le navigateur' };
         }
-        
-        return { success: true };
-      } else {
-        throw new Error('URL de paiement manquante');
       }
+
+      return { success: true };
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      console.error('Error opening checkout:', error);
       const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
-      
       toast({
         title: "Erreur d'abonnement",
         description: errorMessage,
-        variant: "destructive"
+        variant: 'destructive',
       });
-      
       return { success: false, error: errorMessage };
     }
   };
 
+  // Ouvre le portail client Stripe (gestion / résiliation).
   const openCustomerPortal = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Erreur",
-          description: "Vous devez être connecté",
-          variant: "destructive"
-        });
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('customer-portal', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`,
-        },
-      });
-
-      if (error) throw error;
-
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (error) {
-      console.error('Error opening customer portal:', error);
+    if (!STRIPE_PORTAL_URL) {
       toast({
-        title: "Erreur",
-        description: "Impossible d'ouvrir le portail client",
-        variant: "destructive"
+        title: 'Portail indisponible',
+        description: "Le portail de gestion n'est pas encore configuré.",
+        variant: 'destructive',
       });
+      return;
     }
+    window.open(STRIPE_PORTAL_URL, '_blank');
   };
 
   useEffect(() => {
     checkSubscription();
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
         checkSubscription();
@@ -174,6 +135,6 @@ export const useSubscription = () => {
     ...status,
     checkSubscription,
     createCheckoutSession,
-    openCustomerPortal
+    openCustomerPortal,
   };
 };
