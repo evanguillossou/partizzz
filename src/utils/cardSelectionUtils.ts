@@ -134,7 +134,7 @@ export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): b
     // Aucune ne tient à 2 (le "groupe" = une seule personne). On exclut dès qu'un
     // marqueur collectif apparaît, peu importe la tournure de la phrase.
     const groupOnly =
-      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote|\bmajorité\b|les autres (devinent|votent|jugent|notent|décident)/i;
+      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote|\bmajorité\b|les autres (devinent|votent|jugent|notent|décident)|le joueur le plus|la personne avec le plus|la personne la plus(?! importante)|(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*\bquelqu['’]un\b/i;
     if (groupOnly.test(card.content)) return false;
 
     const problematicDistribution =
