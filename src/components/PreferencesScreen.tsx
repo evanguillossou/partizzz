@@ -224,18 +224,6 @@ const PreferencesScreen = () => {
             )}
           </div>
 
-          {/* Votes de groupe — groupes 3+, premium (mode actif) */}
-          {!isCouple && players.length >= 3 && (
-            <PremiumToggle
-              icon="🗳️"
-              title="Cartes votes de groupe"
-              subtitle={'Inclure les questions "qui dans le groupe..."'}
-              active={votes}
-              accent="blue"
-              onToggle={() => setVotes(!votes)}
-            />
-          )}
-
           {/* Bouton principal */}
           <button
             onClick={handleStartGame}
@@ -264,6 +252,18 @@ const PreferencesScreen = () => {
               <div className="text-white/50">→</div>
             </div>
           </button>
+
+          {/* Votes de groupe — groupes 3+, premium (mode actif), sous le mode Interview */}
+          {!isCouple && players.length >= 3 && (
+            <PremiumToggle
+              icon="🗳️"
+              title="Cartes votes de groupe"
+              subtitle={'Inclure les questions "qui dans le groupe..."'}
+              active={votes}
+              accent="blue"
+              onToggle={() => setVotes(!votes)}
+            />
+          )}
 
           {/* Modes à venir (désactivés) */}
           <ComingSoonMode
