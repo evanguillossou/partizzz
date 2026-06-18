@@ -14,8 +14,6 @@ const PreferencesScreen = () => {
   const [sexualLevel, setSexualLevel] = useState([2]);
   const [alcoholLevel, setAlcoholLevel] = useState([2]);
   const [votes, setVotes] = useState(false);
-  const [deepQuestions, setDeepQuestions] = useState(false);
-  const [refMode, setRefMode] = useState(false);
 
   const isCouple = players.length === 2;
   const isPremium = !!subscribed;
@@ -30,19 +28,16 @@ const PreferencesScreen = () => {
     const base = {
       sexualLevel: clampIntensityForTier(sexualLevel[0], isPremium),
       alcoholLevel: clampIntensityForTier(alcoholLevel[0], isPremium),
-      deepQuestions,
+      deepQuestions: false,
       votes,
       discovery: false,
-      refMode,
+      refMode: false,
       interviewMode: false,
       ...overrides,
     };
     // Filet de sécurité : les fonctionnalités premium ne passent jamais en gratuit
     if (!isPremium) {
-      base.refMode = false;
-      // deep/votes de groupe restent premium ; les overrides couple (deep/discovery) sont préservés
       if (!isCouple) {
-        base.deepQuestions = false;
         base.votes = false;
       }
       base.sexualLevel = clampIntensityForTier(base.sexualLevel as number, false);
@@ -61,20 +56,10 @@ const PreferencesScreen = () => {
     setCurrentScreen('game');
   };
 
-  const handleStartDeepGame = () => {
-    setGameSession({
-      players,
-      preferences: buildPreferences({ deepQuestions: true, votes: false, refMode: false }),
-      usedCardIds: [],
-      currentCardIndex: 0,
-    });
-    setCurrentScreen('game');
-  };
-
   const handleStartInterviewGame = () => {
     setGameSession({
       players,
-      preferences: buildPreferences({ interviewMode: true, deepQuestions: false, votes: false, refMode: false }),
+      preferences: buildPreferences({ interviewMode: true, votes: false }),
       usedCardIds: [],
       currentCardIndex: 0,
     });
@@ -148,6 +133,28 @@ const PreferencesScreen = () => {
     );
   };
 
+  // Mode pas encore finalisé : visible mais désactivé, badge "Bientôt disponible".
+  const ComingSoonMode: React.FC<{ icon: string; title: string; subtitle: string }> = ({
+    icon,
+    title,
+    subtitle,
+  }) => (
+    <div className="card-game-mode p-6 w-full text-left opacity-60 cursor-not-allowed select-none">
+      <div className="flex items-center space-x-4">
+        <span className="text-2xl grayscale opacity-80">{icon}</span>
+        <div className="flex-1">
+          <h3 className="text-heading-lg text-white/80 flex items-center gap-2 flex-wrap">
+            {title}
+            <span className="text-[10px] bg-white/15 text-white/90 font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">
+              Bientôt disponible
+            </span>
+          </h3>
+          <p className="text-body-sm text-white/50">{subtitle}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-black p-6">
       <div className="container-mobile section-spacing">
@@ -159,164 +166,126 @@ const PreferencesScreen = () => {
           </p>
         </div>
 
-        <div className="space-y-8 mb-8 animate-slide-up">
+        <div className="space-y-6 mb-8 animate-slide-up">
 
-          {/* Sliders — masqués en ref mode */}
-          {!refMode && (
-            <>
-              {/* Alcohol Level */}
-              <div className="card-game-mode p-6">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">🍻</span>
-                  <div>
-                    <h3 className="text-heading-lg text-white">Gorgées distribuées</h3>
-                    <p className="text-body-sm text-white/70">Niveau actuel : {getLevelLabel(alcoholLevel[0])}</p>
-                  </div>
-                </div>
-                <Slider
-                  value={alcoholLevel}
-                  onValueChange={setAlcoholLevel}
-                  max={maxIntensity}
-                  min={0}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-white/50 mt-2">
-                  <span>Sobre</span>
-                  <span>{isPremium ? 'Party hard' : 'Modéré'}</span>
-                </div>
-                {!isPremium && (
-                  <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
-                    🔒 Niveaux Élevé & Maximum avec Premium →
-                  </button>
-                )}
+          {/* Alcohol Level */}
+          <div className="card-game-mode p-6">
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">🍻</span>
+              <div>
+                <h3 className="text-heading-lg text-white">Gorgées distribuées</h3>
+                <p className="text-body-sm text-white/70">Niveau actuel : {getLevelLabel(alcoholLevel[0])}</p>
               </div>
+            </div>
+            <Slider
+              value={alcoholLevel}
+              onValueChange={setAlcoholLevel}
+              max={maxIntensity}
+              min={0}
+              step={1}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-white/50 mt-2">
+              <span>Sobre</span>
+              <span>{isPremium ? 'Party hard' : 'Modéré'}</span>
+            </div>
+            {!isPremium && (
+              <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
+                🔒 Niveaux Élevé & Maximum avec Premium →
+              </button>
+            )}
+          </div>
 
-              {/* Sexual Level */}
-              <div className="card-game-mode p-6">
-                <div className="flex items-center mb-4">
-                  <span className="text-2xl mr-3">🔞</span>
-                  <div>
-                    <h3 className="text-heading-lg text-white">Cartes explicitement sexuelles</h3>
-                    <p className="text-body-sm text-white/70">Niveau actuel : {getLevelLabel(sexualLevel[0])}</p>
-                  </div>
-                </div>
-                <Slider
-                  value={sexualLevel}
-                  onValueChange={setSexualLevel}
-                  max={maxIntensity}
-                  min={0}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-xs text-white/50 mt-2">
-                  <span>Aucune</span>
-                  <span>{isPremium ? 'Maximum' : 'Modéré'}</span>
-                </div>
-                {!isPremium && (
-                  <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
-                    🔒 Cartes intenses (niv. 4-5) avec Premium →
-                  </button>
-                )}
+          {/* Sexual Level */}
+          <div className="card-game-mode p-6">
+            <div className="flex items-center mb-4">
+              <span className="text-2xl mr-3">🔞</span>
+              <div>
+                <h3 className="text-heading-lg text-white">Cartes explicitement sexuelles</h3>
+                <p className="text-body-sm text-white/70">Niveau actuel : {getLevelLabel(sexualLevel[0])}</p>
               </div>
+            </div>
+            <Slider
+              value={sexualLevel}
+              onValueChange={setSexualLevel}
+              max={maxIntensity}
+              min={0}
+              step={1}
+              className="w-full"
+            />
+            <div className="flex justify-between text-xs text-white/50 mt-2">
+              <span>Aucune</span>
+              <span>{isPremium ? 'Maximum' : 'Modéré'}</span>
+            </div>
+            {!isPremium && (
+              <button onClick={goPremium} className="mt-3 text-xs text-yellow-400/80 hover:text-yellow-400 tap-highlight-none">
+                🔒 Cartes intenses (niv. 4-5) avec Premium →
+              </button>
+            )}
+          </div>
 
-              {/* Deep questions toggle — groupes, premium */}
-              {!isCouple && (
-                <PremiumToggle
-                  icon="🌊"
-                  title="Questions profondes"
-                  subtitle="Inclure les questions deep et introspectives"
-                  active={deepQuestions}
-                  accent="purple"
-                  onToggle={() => setDeepQuestions(!deepQuestions)}
-                />
-              )}
-
-              {/* Votes toggle — groupes 3+, premium */}
-              {!isCouple && players.length >= 3 && (
-                <PremiumToggle
-                  icon="🗳️"
-                  title="Cartes votes de groupe"
-                  subtitle={'Inclure les questions "qui dans le groupe..."'}
-                  active={votes}
-                  accent="blue"
-                  onToggle={() => setVotes(!votes)}
-                />
-              )}
-            </>
-          )}
-
-          {/* T'as la réf — groupes, premium (en bas, juste avant le bandeau premium) */}
-          {!isCouple && (
+          {/* Votes de groupe — groupes 3+, premium (mode actif) */}
+          {!isCouple && players.length >= 3 && (
             <PremiumToggle
-              icon="🎯"
-              title="T'as la réf"
-              subtitle="Que des battles de culture pop et memes"
-              active={refMode}
-              accent="yellow"
-              onToggle={() => setRefMode(!refMode)}
+              icon="🗳️"
+              title="Cartes votes de groupe"
+              subtitle={'Inclure les questions "qui dans le groupe..."'}
+              active={votes}
+              accent="blue"
+              onToggle={() => setVotes(!votes)}
             />
           )}
 
-          {/* Pour les couples : boutons de modes de jeu (deep / découverte restent gratuits) */}
-          {isCouple ? (
-            <>
-              <button
-                onClick={handleStartGame}
-                className="btn-primary w-full shadow-glow tap-highlight-none"
-              >
-                🎯 Lancer la partie
-              </button>
+          {/* Bouton principal */}
+          <button
+            onClick={handleStartGame}
+            className="btn-primary w-full shadow-glow tap-highlight-none"
+          >
+            🎯 Lancer la partie
+          </button>
 
-              <div className="text-center">
-                <p className="text-white/60 text-sm">ou choisissez un mode spécial</p>
+          <div className="text-center">
+            <p className="text-white/60 text-sm">ou choisissez un mode spécial</p>
+          </div>
+
+          {/* 1. Mode Interview — actif, en premier, dispo partout, gratuit */}
+          <button
+            onClick={handleStartInterviewGame}
+            className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
+          >
+            <div className="flex items-center space-x-4">
+              <span className="text-2xl">🎤</span>
+              <div className="flex-1">
+                <h3 className="text-heading-lg text-white">Mode Interview</h3>
+                <p className="text-body-sm text-white/70">
+                  Désignez le joueur interviewé. Une gorgée à chaque réponse que vous trouvez inspirante.
+                </p>
               </div>
+              <div className="text-white/50">→</div>
+            </div>
+          </button>
 
-              <button
-                onClick={handleStartDeepGame}
-                className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-2xl">🌊</span>
-                  <div className="flex-1">
-                    <h3 className="text-heading-lg text-white">Questions deep / ouvertes</h3>
-                    <p className="text-body-sm text-white/70">Conversations profondes et introspectives</p>
-                  </div>
-                  <div className="text-white/50">→</div>
-                </div>
-              </button>
+          {/* Modes à venir (désactivés) */}
+          <ComingSoonMode
+            icon="🌊"
+            title="Questions deep / ouvertes"
+            subtitle="Conversations profondes et introspectives"
+          />
 
-              <button
-                onClick={handleStartInterviewGame}
-                className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
-              >
-                <div className="flex items-center space-x-4">
-                  <span className="text-2xl">🎤</span>
-                  <div className="flex-1">
-                    <h3 className="text-heading-lg text-white">Mode Interview</h3>
-                    <p className="text-body-sm text-white/70">Questions style interview TV : "si vous étiez…", "votre achat le plus fou…"</p>
-                  </div>
-                  <div className="text-white/50">→</div>
-                </div>
-              </button>
-            </>
-          ) : null}
+          {isCouple && (
+            <ComingSoonMode
+              icon="💕"
+              title="On se découvre"
+              subtitle="Idéal pour des dates et rendez-vous"
+            />
+          )}
 
-          {/* Mode Interview — aussi disponible en groupe */}
           {!isCouple && (
-            <button
-              onClick={handleStartInterviewGame}
-              className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
-            >
-              <div className="flex items-center space-x-4">
-                <span className="text-2xl">🎤</span>
-                <div className="flex-1">
-                  <h3 className="text-heading-lg text-white">Mode Interview</h3>
-                  <p className="text-body-sm text-white/70">Questions style interview TV : "si vous étiez…", "votre achat le plus fou…"</p>
-                </div>
-                <div className="text-white/50">→</div>
-              </div>
-            </button>
+            <ComingSoonMode
+              icon="🎯"
+              title="T'as la réf"
+              subtitle="Que des battles de culture pop et memes"
+            />
           )}
         </div>
 
@@ -328,22 +297,13 @@ const PreferencesScreen = () => {
           >
             <p className="text-yellow-400 text-sm font-semibold">💎 Passe en Premium</p>
             <p className="text-white/60 text-xs mt-1">
-              Cartes intenses, T'as la réf, questions deep, parties plus longues
+              Cartes intenses (niv. 4-5), parties 2× plus longues, cartes exclusives
             </p>
           </button>
         )}
 
-        {/* Action buttons */}
+        {/* Retour */}
         <div className="space-y-4 animate-slide-up">
-          {!isCouple && (
-            <button
-              onClick={handleStartGame}
-              className="btn-primary w-full shadow-glow tap-highlight-none"
-            >
-              {refMode ? '🎯 Lancer le mode Battle' : '🎯 Lancer la partie'}
-            </button>
-          )}
-
           <button
             onClick={handleBack}
             className="btn-ghost w-full tap-highlight-none"
