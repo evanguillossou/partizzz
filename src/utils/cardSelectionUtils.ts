@@ -122,9 +122,12 @@ export const getCardPriorityScore = (
 // ─── Filtre d'éligibilité ──────────────────────────────────────────────────
 
 export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): boolean => {
-  const playerPlaceholders = (card.content.match(/\{player\d+\}/g) || []).length;
+  // Compte les joueurs DISTINCTS référencés (pas les occurrences) : une carte
+  // qui répète "{player2}" reste une carte à 2 joueurs. Compter les occurrences
+  // faisait tomber, à chaque partie, toutes les cartes qui re-citent un joueur.
+  const distinctPlayers = new Set(card.content.match(/\{player\d+\}/g) || []).size;
 
-  if (playerPlaceholders > playerCount) return false;
+  if (distinctPlayers > playerCount) return false;
 
   if (playerCount === 2) {
     if (card.isVote) return false;
@@ -158,12 +161,8 @@ export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): b
       /(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*(\bquelqu['’]un\b|\bla personne\b)/i,
     ];
     if (groupPatterns.some(re => re.test(card.content))) return false;
-
-    const problematicDistribution =
-      /distribue.*à qui tu veux(?!.*toi)/i.test(card.content) &&
-      !card.content.includes('tout le monde') &&
-      !card.content.includes("l'autre");
-    if (problematicDistribution) return false;
+    // NB : "distribue à qui tu veux" est jouable à 2 (l'autre = seule cible) → on
+    // ne le bloque plus (l'ancien garde-fou supprimait des cartes 2j valides).
   }
 
   if (playerCount >= 3 && card.dateMode === 'exclusive') return false;
