@@ -133,9 +133,31 @@ export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): b
     // collectif ("le groupe juge", "selon le groupe"), désignation par majorité…
     // Aucune ne tient à 2 (le "groupe" = une seule personne). On exclut dès qu'un
     // marqueur collectif apparaît, peu importe la tournure de la phrase.
-    const groupOnly =
-      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote|\bmajorité\b|les autres (devinent|votent|jugent|notent|décident)|le joueur le plus|la personne avec le plus|la personne la plus(?! importante)|(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*\bquelqu['’]un\b/i;
-    if (groupOnly.test(card.content)) return false;
+    // ── Marqueurs collectifs (regex décomposée pour rester maintenable) ──
+    // Chaque sous-regex cible une famille de tournures de groupe. On exclut la
+    // carte dès qu'UNE matche. Les garde-fous (?!…) et le choix "la personne"
+    // (défini, jamais "une personne") protègent les cartes valides à 2 :
+    //   • "choisis UNE personne et regardez-vous" (duel à 2) → OK
+    //   • "la personne à ta droite / de ton choix" → OK
+    //   • "la personne la plus IMPORTANTE de ton téléphone" → OK
+    //   • "les autres" au sens "les autres gens" (deep) → OK
+    //   • "choisit UN artiste", "choisissez chacun un objet" → OK
+    const groupPatterns: RegExp[] = [
+      // Mécaniques de groupe explicites
+      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bmajorité\b/i,
+      /\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote/i,
+      // "chacun des joueurs/participants", "chaque personne/joueur" → ≥3 joueurs
+      /chacun des (joueurs|participants?|membres|autres)/i,
+      /chaque (personne|joueur|participant)/i,
+      // "les autres" SUIVI d'une action de groupe (pas "les autres gens"/"comprennent")
+      /les autres (devinent|devinez|votent|votez|jugent|jugez|notent|notez|décident|décidez|boivent|trinquent|choisissent|choisissez|désignent|comptent|miment|imitent|distribuent|pointent|répondent|valident)/i,
+      // Désignation par superlatif (= comparaison entre ≥3 joueurs)
+      /le joueur le plus|la personne avec le plus|la personne la plus(?! importante)/i,
+      /la personne dont[^.!?]*(distribue|distribuent|boit|boivent)/i,
+      // Verbe de désignation visant "quelqu'un" ou "la personne" (définie)
+      /(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*(\bquelqu['’]un\b|\bla personne\b)/i,
+    ];
+    if (groupPatterns.some(re => re.test(card.content))) return false;
 
     const problematicDistribution =
       /distribue.*à qui tu veux(?!.*toi)/i.test(card.content) &&
