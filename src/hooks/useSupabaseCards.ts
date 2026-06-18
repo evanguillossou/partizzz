@@ -32,6 +32,7 @@ export const useCards = () => {
         explicitlySexual: card.explicitly_sexual || false,
         isRef: card.is_ref || false,
         isPremium: card.is_premium || false,
+        isInterview: card.is_interview || false,
       })) as Card[];
     }
   });
@@ -55,11 +56,12 @@ export const useAddCard = () => {
           proximity_level: card.proximityLevel || null,
           date_mode: card.dateMode || null,
           explicitly_sexual: card.explicitlySexual || false,
-          is_ref: card.isRef || false
+          is_ref: card.isRef || false,
+          is_interview: card.isInterview || false
         })
         .select()
         .single();
-      
+
       if (error) throw error;
       return data;
     },
@@ -86,7 +88,8 @@ export const useUpdateCard = () => {
           proximity_level: card.proximityLevel || null,
           date_mode: card.dateMode || null,
           explicitly_sexual: card.explicitlySexual || false,
-          is_ref: card.isRef || false
+          is_ref: card.isRef || false,
+          is_interview: card.isInterview || false
         })
         .eq('id', id)
         .select()

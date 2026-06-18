@@ -15,6 +15,7 @@ const GameScreen = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [availableCards, setAvailableCards] = useState<any[]>([]);
   const [totalGameCards, setTotalGameCards] = useState(FREE_GAME_LENGTH);
+  const [loadComplete, setLoadComplete] = useState(false);
   const [playerTargetCounts, setPlayerTargetCounts] = useState<Record<string, number>>({});
   const touchStartX = useRef<number>(0);
   const touchStartY = useRef<number>(0);
@@ -39,6 +40,7 @@ const GameScreen = () => {
   useEffect(() => {
     const loadCards = async () => {
       if (gameSession && players) {
+        setLoadComplete(false);
         try {
           const cards = await getAvailableCardsFromSupabase(
             gameSession,
@@ -51,11 +53,11 @@ const GameScreen = () => {
           // selectOptimalCards a déjà trié et ordonné les cartes — on ne re-shuffle pas
           const limitedCards = cards.slice(0, totalGameCards);
           setAvailableCards(limitedCards);
-          
+
           if (limitedCards.length > 0) {
             const result = insertPlayerNames(limitedCards[0].content, gameSession.players, playerTargetCounts);
             setCurrentCard(result.content);
-            
+
             // Mettre à jour les compteurs
             const newCounts = { ...playerTargetCounts };
             result.targetedPlayerIds.forEach(id => {
@@ -65,6 +67,8 @@ const GameScreen = () => {
           }
         } catch (error) {
           console.error('Erreur lors du chargement des cartes:', error);
+        } finally {
+          setLoadComplete(true);
         }
       }
     };
@@ -189,6 +193,25 @@ const GameScreen = () => {
             className="btn-primary"
           >
             Retour à l'accueil
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Mode sélectionné sans aucune carte correspondante (ex : Interview pas encore alimenté)
+  if (loadComplete && availableCards.length === 0) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-500 to-indigo-600 p-6 flex items-center justify-center">
+        <div className="text-center text-white max-w-sm">
+          <div className="text-5xl mb-4">🎤</div>
+          <p className="text-lg font-semibold mb-2">Aucune carte pour ce mode pour l'instant</p>
+          <p className="text-white/70 text-sm mb-6">De nouvelles cartes arrivent très bientôt !</p>
+          <button
+            onClick={() => setCurrentScreen('preferences')}
+            className="btn-primary w-full tap-highlight-none"
+          >
+            ← Choisir un autre mode
           </button>
         </div>
       </div>

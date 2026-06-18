@@ -4,3 +4,4 @@ dist
 .env.local
 *.timestamp-*.mjs
 partiz-main/
+.DS_Store

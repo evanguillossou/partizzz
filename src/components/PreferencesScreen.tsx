@@ -34,6 +34,7 @@ const PreferencesScreen = () => {
       votes,
       discovery: false,
       refMode,
+      interviewMode: false,
       ...overrides,
     };
     // Filet de sécurité : les fonctionnalités premium ne passent jamais en gratuit
@@ -70,10 +71,10 @@ const PreferencesScreen = () => {
     setCurrentScreen('game');
   };
 
-  const handleStartDiscoveryGame = () => {
+  const handleStartInterviewGame = () => {
     setGameSession({
       players,
-      preferences: buildPreferences({ discovery: true, deepQuestions: false, votes: false, refMode: false }),
+      preferences: buildPreferences({ interviewMode: true, deepQuestions: false, votes: false, refMode: false }),
       usedCardIds: [],
       currentCardIndex: 0,
     });
@@ -286,20 +287,37 @@ const PreferencesScreen = () => {
               </button>
 
               <button
-                onClick={handleStartDiscoveryGame}
+                onClick={handleStartInterviewGame}
                 className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
               >
                 <div className="flex items-center space-x-4">
-                  <span className="text-2xl">💕</span>
+                  <span className="text-2xl">🎤</span>
                   <div className="flex-1">
-                    <h3 className="text-heading-lg text-white">On se découvre</h3>
-                    <p className="text-body-sm text-white/70">Idéal pour des dates et rendez-vous</p>
+                    <h3 className="text-heading-lg text-white">Mode Interview</h3>
+                    <p className="text-body-sm text-white/70">Questions style interview TV : "si vous étiez…", "votre achat le plus fou…"</p>
                   </div>
                   <div className="text-white/50">→</div>
                 </div>
               </button>
             </>
           ) : null}
+
+          {/* Mode Interview — aussi disponible en groupe */}
+          {!isCouple && (
+            <button
+              onClick={handleStartInterviewGame}
+              className="card-game-mode p-6 w-full text-left transition-all duration-200 hover:scale-[1.02] hover:shadow-lg tap-highlight-none"
+            >
+              <div className="flex items-center space-x-4">
+                <span className="text-2xl">🎤</span>
+                <div className="flex-1">
+                  <h3 className="text-heading-lg text-white">Mode Interview</h3>
+                  <p className="text-body-sm text-white/70">Questions style interview TV : "si vous étiez…", "votre achat le plus fou…"</p>
+                </div>
+                <div className="text-white/50">→</div>
+              </div>
+            </button>
+          )}
         </div>
 
         {/* Bandeau premium discret pour les non-abonnés */}

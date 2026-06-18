@@ -38,6 +38,7 @@ export const seedAllCards = async () => {
     explicitly_sexual: card.explicitlySexual ?? false,
     is_ref: card.isRef ?? false,
     is_premium: card.isPremium ?? false,
+    is_interview: card.isInterview ?? false,
     is_active: true,
   }));
 

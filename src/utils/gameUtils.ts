@@ -104,7 +104,8 @@ export const getAvailableCardsFromSupabase = async (
       dateMode: card.date_mode as 'no' | 'compatible' | 'exclusive' | undefined,
       explicitlySexual: card.explicitly_sexual || false,
       isPremium: card.is_premium || false,
-      isRef: card.is_ref || false
+      isRef: card.is_ref || false,
+      isInterview: card.is_interview || false
     }));
     
     // Filtrer les cartes déjà utilisées

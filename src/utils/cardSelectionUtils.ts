@@ -157,6 +157,12 @@ export const filterCardsByRules = (
   playerCount: number
 ): Card[] => {
   const filtered = cards.filter(card => {
+    // Mode "Interview" : uniquement les cartes isInterview
+    if (preferences.interviewMode) {
+      return !!card.isInterview;
+    }
+    if (card.isInterview) return false;
+
     // Mode "T'as la réf" : uniquement les cartes isRef
     if (preferences.refMode) {
       return !!card.isRef;

@@ -24,6 +24,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           is_deep: boolean | null
+          is_interview: boolean | null
           is_premium: boolean | null
           is_ref: boolean | null
           is_vote: boolean | null
@@ -41,6 +42,7 @@ export type Database = {
           id: string
           is_active?: boolean | null
           is_deep?: boolean | null
+          is_interview?: boolean | null
           is_premium?: boolean | null
           is_ref?: boolean | null
           is_vote?: boolean | null
@@ -58,6 +60,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           is_deep?: boolean | null
+          is_interview?: boolean | null
           is_premium?: boolean | null
           is_ref?: boolean | null
           is_vote?: boolean | null

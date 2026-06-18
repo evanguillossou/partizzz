@@ -17,8 +17,9 @@ export interface GamePreferences {
   alcoholLevel: number; // 0-5
   deepQuestions: boolean;
   votes: boolean;
-  discovery?: boolean; // Pour les parties à 2
+  discovery?: boolean; // Mode "date" — masqué de l'UI, cartes conservées en base
   refMode?: boolean; // Mode "T'as la réf"
+  interviewMode?: boolean; // Mode "Interview" (questions style interview TV)
 }
 
 export interface Card {
@@ -33,6 +34,7 @@ export interface Card {
   explicitlySexual?: boolean;
   isPremium?: boolean;
   isRef?: boolean;
+  isInterview?: boolean;
 }
 
 export interface GameSession {
