@@ -329,43 +329,43 @@ export const selectOptimalCards = (
 
   const isDateMode = playerCount === 2 && preferences.discovery === true;
 
+  // 0. Dédoublonnage par CONTENU : deux cartes au texte identique (IDs
+  //    différents en base, ex. doublons saisis à la main) ne doivent jamais
+  //    pouvoir tomber 2× dans la même partie. On garde la 1re occurrence.
+  const seenContent = new Set<string>();
+  const deduped = availableCards.filter(card => {
+    const key = (card.content || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!key || seenContent.has(key)) return false;
+    seenContent.add(key);
+    return true;
+  });
+
   // 1. Filtrer les cartes inéligibles
   const eligible = filterCardsByRules(
-    availableCards,
+    deduped,
     preferences,
     groupProximity,
     isDateMode,
     playerCount
   );
 
-  // 2. Calculer le score de chaque carte
-  const scored = eligible.map(card => ({
-    card,
-    score: getCardPriorityScore(card, preferences, groupProximity),
-  }));
+  // 2. Scorer chaque carte (on écarte les scores nuls = non pertinents)
+  const scored = eligible
+    .map(card => ({
+      card,
+      score: getCardPriorityScore(card, preferences, groupProximity),
+    }))
+    .filter(c => c.score > 0);
 
-  // 3. Diviser en 3 paliers : HIGH / MEDIUM / LOW
-  //    On définit les seuils en valeurs absolues pour éviter les biais
-  const maxScore = Math.max(...scored.map(c => c.score), 1);
-  const highThreshold  = maxScore * 0.7;
-  const mediumThreshold = maxScore * 0.35;
+  // 3. Tri aléatoire PONDÉRÉ par le score (Efraimidis–Spirakis : clé = u^(1/poids)).
+  //    Chaque partie pioche un mélange DIFFÉRENT dans TOUT le pool éligible, avec
+  //    un biais vers les cartes les plus pertinentes. Fini le "toujours les mêmes
+  //    15 cartes" : on ne tronque plus un deck trié par score, on échantillonne.
+  const weighted = scored
+    .map(c => ({ card: c.card, k: Math.pow(Math.random(), 1 / Math.max(1, c.score)) }))
+    .sort((a, b) => b.k - a.k)
+    .map(x => x.card);
 
-  const high   = scored.filter(c => c.score >= highThreshold);
-  const medium = scored.filter(c => c.score >= mediumThreshold && c.score < highThreshold);
-  const low    = scored.filter(c => c.score > 0 && c.score < mediumThreshold);
-  // Les cartes avec score = 0 (proximité refusée) sont déjà filtrées
-
-  // 4. Mélanger aléatoirement dans chaque palier
-  const shuffledHigh   = shuffleArray(high);
-  const shuffledMedium = shuffleArray(medium);
-  const shuffledLow    = shuffleArray(low);
-
-  // 5. Entrelacement par type à l'intérieur de chaque palier
-  const resultHigh   = interleaveByType(shuffledHigh);
-  const resultMedium = interleaveByType(shuffledMedium);
-  const resultLow    = interleaveByType(shuffledLow);
-
-  const final = preventConsecutiveSameType([...resultHigh, ...resultMedium, ...resultLow]);
-
-  return final;
+  // 4. Éviter d'enchaîner trop de cartes du même type
+  return preventConsecutiveSameType(weighted);
 };
