@@ -4,6 +4,7 @@ import { useGame } from '../contexts/GameContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import AuthModal from './AuthModal';
 
 const PaymentScreen = () => {
@@ -87,7 +88,7 @@ const PaymentScreen = () => {
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
-                <span>Mode "T'as la réf" & questions deep</span>
+                <span>Cartes votes de groupe</span>
               </div>
               <div className="flex items-center space-x-3 text-white/90">
                 <span className="text-green-400 text-xl">✓</span>
@@ -135,10 +136,24 @@ const PaymentScreen = () => {
         </div>
 
         {/* Legal notice */}
-        <div className="text-center mt-8">
+        <div className="text-center mt-8 space-y-3">
           <p className="text-xs text-white/50">
-            Paiement sécurisé via Stripe • Annulation facile • Support client
+            Abonnement 2,99€/semaine, sans engagement, résiliable à tout moment. Renouvellement
+            automatique jusqu'à résiliation. Paiement sécurisé via Stripe.
           </p>
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
+            <Link to="/terms" className="text-white/50 underline hover:text-white/70">
+              Conditions & abonnement
+            </Link>
+            <span className="text-white/30">•</span>
+            <Link to="/privacy" className="text-white/50 underline hover:text-white/70">
+              Confidentialité
+            </Link>
+            <span className="text-white/30">•</span>
+            <Link to="/mentions" className="text-white/50 underline hover:text-white/70">
+              Mentions légales
+            </Link>
+          </div>
         </div>
       </div>
 

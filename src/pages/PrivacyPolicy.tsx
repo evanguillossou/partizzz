@@ -1,153 +1,116 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
+/**
+ * Politique de confidentialité (RGPD).
+ * ⚠️ BROUILLON : compléter les champs [entre crochets] après création de la
+ * SASU et faire relire par un juriste. Mettre à jour la liste des
+ * sous-traitants si un outil d'analytics est ajouté.
+ */
+const LAST_UPDATE = 'Juillet 2026';
 
 const PrivacyPolicy = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <div className="mb-8">
-          <Link to="/">
-            <Button variant="ghost" className="text-white hover:bg-white/10 mb-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour à l'accueil
-            </Button>
-          </Link>
-          <h1 className="text-4xl font-bold mb-2">Politique de Confidentialité</h1>
-          <p className="text-white/80">Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}</p>
-        </div>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container mx-auto max-w-3xl px-5 py-10">
+        <Link
+          to="/"
+          className="mb-8 inline-flex items-center gap-2 text-sm text-white/60 transition-colors hover:text-white"
+        >
+          <ArrowLeft className="h-4 w-4" /> Retour à l'accueil
+        </Link>
 
-        <div className="space-y-8 text-white/90 leading-relaxed">
+        <h1 className="mb-1 text-3xl font-bold">Politique de confidentialité</h1>
+        <p className="mb-10 text-sm text-white/50">Dernière mise à jour : {LAST_UPDATE}</p>
+
+        <div className="space-y-9 text-[15px] leading-relaxed text-white/80">
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">1. Introduction</h2>
+            <h2 className="mb-3 text-xl font-semibold text-white">1. Responsable du traitement</h2>
             <p>
-              Nous respectons votre vie privée et nous nous engageons à protéger vos données personnelles. 
-              Cette politique explique comment nous collectons, utilisons et protégeons vos informations 
-              lorsque vous utilisez notre application de jeu de cartes pour couples.
+              Le responsable du traitement de vos données est [RAISON SOCIALE DE LA SASU], éditrice
+              de l'application <strong>Partiz</strong> (voir les{' '}
+              <Link to="/mentions" className="text-pink-400 hover:text-pink-300">mentions légales</Link>).
+              Nous nous engageons à protéger votre vie privée conformément au Règlement Général sur
+              la Protection des Données (RGPD).
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">2. Données Collectées</h2>
-            <p>Nous collectons les types d'informations suivants :</p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li><strong>Informations de compte :</strong> Email, mot de passe, préférences utilisateur</li>
-              <li><strong>Données de jeu :</strong> Préférences du couple, réponses aux questions, progression</li>
-              <li><strong>Informations de paiement :</strong> Traitées de manière sécurisée via Stripe</li>
-              <li><strong>Données techniques :</strong> Adresse IP, type d'appareil, navigateur</li>
-              <li><strong>Cookies :</strong> Pour améliorer votre expérience utilisateur</li>
+            <h2 className="mb-3 text-xl font-semibold text-white">2. Données que nous collectons</h2>
+            <ul className="mt-1 list-disc space-y-2 pl-5">
+              <li><strong>Compte :</strong> adresse e-mail et identifiant de compte (via notre prestataire d'authentification), uniquement si vous créez un compte pour vous abonner.</li>
+              <li><strong>Abonnement :</strong> statut de votre abonnement (actif / inactif, date de renouvellement). Les données de paiement (carte bancaire) sont traitées directement par Stripe et ne nous sont jamais transmises.</li>
+              <li><strong>Préférences de jeu :</strong> réglages de partie (intensité, mode). Certaines préférences restent stockées localement sur votre appareil.</li>
+              <li><strong>Données techniques :</strong> données de fonctionnement et de sécurité (par ex. adresse IP, type d'appareil) traitées par nos hébergeurs.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">3. Utilisation des Données</h2>
-            <p>Nous utilisons vos données pour :</p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li>Fournir et personnaliser notre service</li>
-              <li>Gérer votre compte et vos abonnements</li>
-              <li>Améliorer l'expérience utilisateur</li>
-              <li>Envoyer des notifications importantes</li>
-              <li>Assurer la sécurité et prévenir la fraude</li>
-              <li>Respecter nos obligations légales</li>
+            <h2 className="mb-3 text-xl font-semibold text-white">3. Finalités & bases légales</h2>
+            <ul className="mt-1 list-disc space-y-2 pl-5">
+              <li>Fournir le service et gérer votre compte — <em>exécution du contrat</em>.</li>
+              <li>Gérer les abonnements et les paiements — <em>exécution du contrat</em> et <em>obligations légales</em> (comptables).</li>
+              <li>Assurer la sécurité et le bon fonctionnement du service — <em>intérêt légitime</em>.</li>
+              <li>Améliorer l'application (statistiques d'usage) — <em>consentement</em> ou <em>intérêt légitime</em> selon l'outil utilisé.</li>
             </ul>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">4. Partage des Données</h2>
-            <p>Nous ne vendons jamais vos données personnelles. Nous pouvons les partager uniquement avec :</p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li><strong>Prestataires de services :</strong> Supabase (hébergement), Stripe (paiements)</li>
-              <li><strong>Autorités légales :</strong> Si requis par la loi</li>
-              <li><strong>Votre consentement :</strong> Avec votre autorisation explicite</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">5. Sécurité des Données</h2>
-            <p>
-              Nous mettons en place des mesures de sécurité appropriées pour protéger vos données :
-            </p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li>Chiffrement des données en transit et au repos</li>
-              <li>Authentification sécurisée</li>
-              <li>Accès limité aux données par le personnel autorisé</li>
-              <li>Surveillance et détection des incidents de sécurité</li>
-              <li>Sauvegardes régulières et sécurisées</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">6. Vos Droits (RGPD)</h2>
-            <p>Conformément au RGPD, vous avez les droits suivants :</p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li><strong>Accès :</strong> Demander une copie de vos données</li>
-              <li><strong>Rectification :</strong> Corriger les données inexactes</li>
-              <li><strong>Suppression :</strong> Demander la suppression de vos données</li>
-              <li><strong>Portabilité :</strong> Recevoir vos données dans un format structuré</li>
-              <li><strong>Opposition :</strong> Vous opposer au traitement de vos données</li>
-              <li><strong>Limitation :</strong> Demander la limitation du traitement</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">7. Cookies et Technologies Similaires</h2>
-            <p>
-              Nous utilisons des cookies pour améliorer votre expérience. Ces cookies nous permettent de :
-            </p>
-            <ul className="list-disc list-inside mt-3 space-y-2 ml-4">
-              <li>Maintenir votre session connectée</li>
-              <li>Mémoriser vos préférences</li>
-              <li>Analyser l'utilisation de l'application</li>
-              <li>Personnaliser le contenu</li>
+            <h2 className="mb-3 text-xl font-semibold text-white">4. Sous-traitants & partage</h2>
+            <p>Nous ne vendons jamais vos données. Nous faisons appel à des prestataires qui les traitent pour notre compte :</p>
+            <ul className="mt-3 list-disc space-y-2 pl-5">
+              <li><strong>Supabase</strong> — authentification et base de données ;</li>
+              <li><strong>Stripe</strong> — paiement et gestion des abonnements ;</li>
+              <li><strong>Vercel</strong> — hébergement de l'application ;</li>
+              <li className="text-white/50">[Outil d'analytics — à ajouter le cas échéant].</li>
             </ul>
             <p className="mt-3">
-              Vous pouvez gérer vos préférences de cookies dans les paramètres de votre navigateur.
+              Certains prestataires peuvent traiter des données hors de l'Union européenne, dans le
+              cadre de garanties appropriées (clauses contractuelles types).
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">8. Conservation des Données</h2>
+            <h2 className="mb-3 text-xl font-semibold text-white">5. Durée de conservation</h2>
             <p>
-              Nous conservons vos données personnelles aussi longtemps que nécessaire pour fournir nos services 
-              ou pour respecter nos obligations légales. Les données de compte inactif peuvent être supprimées 
-              après 3 ans d'inactivité.
+              Nous conservons vos données aussi longtemps que nécessaire à la fourniture du service
+              et au respect de nos obligations légales (notamment comptables). Les données d'un
+              compte inactif ou supprimé sont effacées ou anonymisées dans un délai raisonnable.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">9. Transferts Internationaux</h2>
-            <p>
-              Vos données peuvent être traitées dans des pays autres que le vôtre. Nous nous assurons que 
-              ces transferts respectent les standards de protection des données applicables.
+            <h2 className="mb-3 text-xl font-semibold text-white">6. Vos droits (RGPD)</h2>
+            <p>Vous disposez des droits d'accès, de rectification, d'effacement, de portabilité, de limitation et d'opposition. Pour les exercer :</p>
+            <p className="mt-3">
+              <a href="mailto:[EMAIL DE CONTACT]" className="text-pink-400 hover:text-pink-300">[EMAIL DE CONTACT]</a>
+            </p>
+            <p className="mt-3">
+              Vous pouvez également introduire une réclamation auprès de la CNIL (<a href="https://www.cnil.fr" target="_blank" rel="noopener noreferrer" className="text-pink-400 hover:text-pink-300">www.cnil.fr</a>).
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">10. Modifications de cette Politique</h2>
+            <h2 className="mb-3 text-xl font-semibold text-white">7. Sécurité</h2>
             <p>
-              Nous pouvons modifier cette politique de confidentialité. Les modifications importantes 
-              vous seront notifiées par email ou via l'application. La date de dernière mise à jour 
-              est indiquée en haut de cette page.
+              Nous mettons en œuvre des mesures techniques et organisationnelles appropriées pour
+              protéger vos données (chiffrement en transit, accès restreint).
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold mb-4 text-white">11. Contact</h2>
+            <h2 className="mb-3 text-xl font-semibold text-white">8. Modifications</h2>
             <p>
-              Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, 
-              vous pouvez nous contacter via l'application ou par email. Nous nous engageons à répondre 
-              dans les 30 jours.
+              Cette politique peut évoluer. Toute modification importante vous sera notifiée dans
+              l'application. La date de dernière mise à jour figure en haut de cette page.
             </p>
           </section>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-white/20">
-          <Link to="/">
-            <Button className="bg-white text-purple-900 hover:bg-white/90">
-              Retour à l'application
-            </Button>
-          </Link>
+        <div className="mt-12 flex flex-wrap gap-4 border-t border-white/10 pt-8 text-sm">
+          <Link to="/mentions" className="text-white/60 hover:text-white">Mentions légales</Link>
+          <Link to="/terms" className="text-white/60 hover:text-white">Conditions d'utilisation</Link>
         </div>
       </div>
     </div>

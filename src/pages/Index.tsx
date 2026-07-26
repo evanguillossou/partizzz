@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { GameProvider, useGame } from '../contexts/GameContext';
+import AgeGate from '../components/AgeGate';
 import HomeScreen from '../components/HomeScreen';
 import PlayerEntryScreen from '../components/PlayerEntryScreen';
 import PreferencesScreen from '../components/PreferencesScreen';
@@ -49,7 +50,9 @@ const GameApp = () => {
 const Index = () => {
   return (
     <GameProvider>
-      <GameApp />
+      <AgeGate>
+        <GameApp />
+      </AgeGate>
     </GameProvider>
   );
 };

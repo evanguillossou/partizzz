@@ -119,14 +119,23 @@ const HomeScreen = () => {
             </>
           )}
           
+          {/* Message sanitaire (jeu à boire) */}
+          <p className="text-[10px] leading-relaxed text-white/40">
+            Réservé aux 18 ans et plus. L'abus d'alcool est dangereux pour la santé, à consommer avec modération.
+          </p>
+
           {/* Legal links */}
-          <div className="flex justify-center space-x-4 text-xs">
+          <div className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
+            <Link to="/mentions" className="text-white/50 hover:text-white/70">
+              Mentions légales
+            </Link>
+            <span className="text-white/30">•</span>
             <Link to="/terms" className="text-white/50 hover:text-white/70">
-              Conditions d'utilisation
+              CGU
             </Link>
             <span className="text-white/30">•</span>
             <Link to="/privacy" className="text-white/50 hover:text-white/70">
-              Politique de confidentialité
+              Confidentialité
             </Link>
           </div>
 
