@@ -5,6 +5,7 @@ import { useSubscription } from '../hooks/useSubscription';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { trackEvent } from '../lib/analytics';
 import AuthModal from './AuthModal';
 
 const PaymentScreen = () => {
@@ -37,6 +38,7 @@ const PaymentScreen = () => {
   };
 
   const handleStartSubscription = async () => {
+    trackEvent('clic_premium', { source: 'paywall' });
     if (isAuthenticated) {
       console.log('Starting subscription process...');
       const result = await createCheckoutSession();

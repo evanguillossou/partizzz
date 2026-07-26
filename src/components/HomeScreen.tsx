@@ -6,6 +6,7 @@ import { Users, Play, Settings, X, Crown } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useGame } from '../contexts/GameContext';
 import { useSubscription } from '../hooks/useSubscription';
+import { trackEvent } from '../lib/analytics';
 import WelcomeModal from './WelcomeModal';
 import AdminCardsScreen from './AdminCardsScreen';
 
@@ -101,7 +102,7 @@ const HomeScreen = () => {
               {/* CTA Premium — abonnement */}
               <div className="space-y-2">
                 <button
-                  onClick={() => { localStorage.setItem('partiz_visited', '1'); setCurrentScreen('payment'); }}
+                  onClick={() => { trackEvent('clic_premium', { source: 'accueil' }); localStorage.setItem('partiz_visited', '1'); setCurrentScreen('payment'); }}
                   className="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold py-3 px-5 rounded-xl transition-all transform hover:scale-105 shadow-lg tap-highlight-none flex items-center justify-center gap-2"
                 >
                   <Crown className="w-4 h-4 text-yellow-300 shrink-0" />

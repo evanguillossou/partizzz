@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { checkoutUrl, hasStripeConfigured, STRIPE_PORTAL_URL } from '@/lib/premium';
+import { trackEvent } from '@/lib/analytics';
 
 interface SubscriptionStatus {
   subscribed: boolean;
@@ -79,6 +80,7 @@ export const useSubscription = () => {
       }
 
       const url = checkoutUrl(session.user.id);
+      trackEvent('checkout_ouvert');
       const newWindow = window.open(url, '_blank');
 
       // Popup bloqué → fallback même fenêtre après confirmation

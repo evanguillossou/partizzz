@@ -7,6 +7,7 @@ import {
   PREMIUM_MAX_INTENSITY,
   clampIntensityForTier,
 } from '../config/freemium';
+import { trackEvent } from '../lib/analytics';
 
 const PreferencesScreen = () => {
   const { players, setCurrentScreen, setGameSession, relationships } = useGame();
@@ -21,7 +22,10 @@ const PreferencesScreen = () => {
 
   const hasConfiguredRelationships = Object.keys(relationships).length > 0;
 
-  const goPremium = () => setCurrentScreen('payment');
+  const goPremium = () => {
+    trackEvent('clic_premium', { source: 'preferences' });
+    setCurrentScreen('payment');
+  };
 
   // Construit les préférences en appliquant les plafonds du palier gratuit.
   const buildPreferences = (overrides: Record<string, unknown> = {}) => {
@@ -47,6 +51,7 @@ const PreferencesScreen = () => {
   };
 
   const handleStartGame = () => {
+    trackEvent('partie_lancee', { mode: 'standard', joueurs: players.length });
     setGameSession({
       players,
       preferences: buildPreferences(),
@@ -57,6 +62,7 @@ const PreferencesScreen = () => {
   };
 
   const handleStartInterviewGame = () => {
+    trackEvent('partie_lancee', { mode: 'interview', joueurs: players.length });
     setGameSession({
       players,
       preferences: buildPreferences({ interviewMode: true, votes: false }),
