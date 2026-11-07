@@ -87,11 +87,16 @@ const CardEditor: React.FC<{
   };
 
   // Verdict global
+  const hasText = draft.content.trim().length > 0;
   const plays = placements.filter(p => p.plays);
-  let verdict: { tone: 'ok' | 'warn' | 'crit'; text: string };
+  const closeOnly = placements.filter(p => p.closeOnly);
+  let verdict: { tone: 'info' | 'ok' | 'warn' | 'crit'; text: string };
   if (!draft.isActive) verdict = { tone: 'warn', text: 'Carte désactivée : elle ne sort nulle part.' };
+  else if (!hasText) verdict = { tone: 'info', text: 'Écris le texte de la carte : l’aperçu se met à jour en direct.' };
   else if (mode === 'date') verdict = { tone: 'crit', text: "Le mode Date est retiré de l'app : cette carte ne sort nulle part." };
   else if (duplicate) verdict = { tone: 'warn', text: "Doublon : ce texte existe déjà sur une autre carte active. Le jeu n'en garde qu'une des deux." };
+  else if (plays.length === 0 && closeOnly.length > 0)
+    verdict = { tone: 'warn', text: 'Elle sortira seulement pour les groupes qui se connaissent très bien (proximité « Proches »).' };
   else if (plays.length === 0) verdict = { tone: 'crit', text: 'Cette carte ne sortira dans aucune configuration.' };
   else if (!status.live) verdict = { tone: 'warn', text: `Mode pas encore en ligne : elle sortira quand « ${MODE_LABELS[mode]} » sera réactivé.` };
   else verdict = { tone: 'ok', text: `Cette carte sortira (${plays.length}/${placements.length} configurations).` };
@@ -240,6 +245,7 @@ const CardEditor: React.FC<{
             <div
               className={cx(
                 'rounded-2xl border p-4',
+                verdict.tone === 'info' && 'border-white/10 bg-white/[0.03]',
                 verdict.tone === 'ok' && 'border-emerald-500/30 bg-emerald-500/[0.07]',
                 verdict.tone === 'warn' && 'border-amber-500/30 bg-amber-500/[0.07]',
                 verdict.tone === 'crit' && 'border-rose-500/30 bg-rose-500/[0.07]'
@@ -249,27 +255,34 @@ const CardEditor: React.FC<{
               <p
                 className={cx(
                   'mt-2 text-sm font-semibold',
+                  verdict.tone === 'info' && 'text-zinc-300',
                   verdict.tone === 'ok' && 'text-emerald-300',
                   verdict.tone === 'warn' && 'text-amber-300',
                   verdict.tone === 'crit' && 'text-rose-300'
                 )}
               >
-                {verdict.tone === 'ok' ? '✅ ' : '⚠️ '}
+                {verdict.tone === 'ok' ? '✅ ' : verdict.tone === 'info' ? '✏️ ' : '⚠️ '}
                 {verdict.text}
               </p>
             </div>
 
-            {placements.length > 0 && (
+            {hasText && placements.length > 0 && (
               <ul className="space-y-2">
                 {placements.map(p => (
                   <li key={p.config.id} className="rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5">
                     <div className="flex items-center justify-between gap-3">
                       <span className="text-sm text-zinc-200">{p.config.label}</span>
-                      <span className={cx('text-sm font-bold', p.plays ? 'text-emerald-300' : 'text-zinc-500')}>
-                        {p.plays ? '✓' : '✗'}
+                      <span
+                        className={cx(
+                          'text-sm font-bold',
+                          p.plays ? 'text-emerald-300' : p.closeOnly ? 'text-amber-300' : 'text-zinc-500'
+                        )}
+                      >
+                        {p.plays ? '✓' : p.closeOnly ? '✓*' : '✗'}
                       </span>
                     </div>
-                    {!p.plays && p.reason && <p className="mt-1 text-xs text-zinc-500">{p.reason}</p>}
+                    {p.closeOnly && <p className="mt-1 text-xs text-amber-300/80">* seulement si le groupe se connaît très bien</p>}
+                    {!p.plays && !p.closeOnly && p.reason && <p className="mt-1 text-xs text-zinc-500">{p.reason}</p>}
                   </li>
                 ))}
               </ul>

@@ -11,7 +11,7 @@
  */
 
 import { Card, GamePreferences, Player } from '../types/game';
-import { FREE_MAX_INTENSITY } from '../config/freemium';
+import { FREE_MAX_INTENSITY, isThemedMode } from '../config/freemium';
 import { RelationshipData } from '../types/relationships';
 import { getGroupProximityLevel } from './relationshipUtils';
 
@@ -377,10 +377,14 @@ export const getPlayableCards = (
     return true;
   });
 
-  // 3. Scorer chaque carte (on écarte les scores nuls = non pertinents)
+  // 3. Scorer chaque carte. En partie normale, on écarte les scores nuls
+  //    (cartes très en dessous de l'intensité demandée). Dans un mode à thème
+  //    (Interview, Deep, Réf), le thème prime : sinon un joueur aux curseurs
+  //    d'intensité 4-5 tombait sur un mode Interview vide (0 carte sur 30).
+  const themed = isThemedMode(preferences);
   return deduped
     .map(card => ({ card, score: getCardPriorityScore(card, preferences, groupProximity) }))
-    .filter(c => c.score > 0);
+    .filter(c => c.score > 0 || themed);
 };
 
 export const selectOptimalCards = (

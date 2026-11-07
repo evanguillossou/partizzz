@@ -205,6 +205,8 @@ export const findInvisibleCardIds = (cards: AdminCard[]): Set<string> => {
 export interface CardPlacement {
   config: PoolConfig;
   plays: boolean;
+  /** Ne sort que si le groupe se connaît très bien (proximité « Proches »). */
+  closeOnly: boolean;
   reason?: string;
 }
 
@@ -232,6 +234,7 @@ export const getCardPlacements = (card: AdminCard): CardPlacement[] => {
   const asActive = { ...card, isActive: true };
   return POOL_CONFIGS.filter(cfg => cfg.mode === mode).map(config => {
     const plays = playableIds([asActive], config).has(card.id);
-    return { config, plays, reason: plays ? undefined : explainExclusion(card, config) };
+    const closeOnly = !plays && playableIds([asActive], config, 'high').has(card.id);
+    return { config, plays, closeOnly, reason: plays || closeOnly ? undefined : explainExclusion(card, config) };
   });
 };
