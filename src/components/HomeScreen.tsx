@@ -8,20 +8,11 @@ import { useGame } from '../contexts/GameContext';
 import { useSubscription } from '../hooks/useSubscription';
 import { trackEvent } from '../lib/analytics';
 import WelcomeModal from './WelcomeModal';
-import AdminCardsScreen from './AdminCardsScreen';
 
 const HomeScreen = () => {
   const { setCurrentScreen } = useGame();
   const { subscribed, subscription_tier, subscription_end, openCustomerPortal } = useSubscription();
   const [showWelcome, setShowWelcome] = useState(false);
-  const [showAdmin, setShowAdmin] = useState(false);
-
-  // Admin access - you can change this condition or implement proper auth later
-  const isAdmin = import.meta.env.DEV; // Only show in development
-
-  if (showAdmin) {
-    return <AdminCardsScreen onBack={() => setShowAdmin(false)} />;
-  }
 
   const handleClose = () => {
     localStorage.setItem('partiz_visited', '1');
@@ -140,15 +131,6 @@ const HomeScreen = () => {
             </Link>
           </div>
 
-          {/* Admin (DEV uniquement) */}
-          {isAdmin && (
-            <button
-              onClick={() => setShowAdmin(true)}
-              className="text-white/20 hover:text-white/40 text-xs transition-colors tap-highlight-none"
-            >
-              ⚙️ Admin
-            </button>
-          )}
         </div>
       </div>
 

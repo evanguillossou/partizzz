@@ -1,10 +1,11 @@
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card } from '@/types/game';
 import { cards as localCards } from '@/data/gameData';
 
-// Hook pour récupérer toutes les cartes
+// Cartes actives du jeu (lecture seule). Les créations / modifications de
+// cartes se font dans le back-office (/admin), réservé à l'administrateur.
 export const useCards = () => {
   return useQuery({
     queryKey: ['cards'],
@@ -14,7 +15,7 @@ export const useCards = () => {
         .select('*')
         .eq('is_active', true)
         .order('created_at', { ascending: false });
-      
+
       if (error) {
         console.warn('Supabase inaccessible, fallback local');
         return localCards;
@@ -34,91 +35,6 @@ export const useCards = () => {
         isPremium: card.is_premium || false,
         isInterview: card.is_interview || false,
       })) as Card[];
-    }
-  });
-};
-
-// Hook pour ajouter une carte
-export const useAddCard = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (card: Omit<Card, 'id'>) => {
-      const { data, error } = await supabase
-        .from('cards')
-        .insert({
-          id: `card-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          content: card.content,
-          alcohol_level: card.alcoholLevel || 0,
-          sexual_level: card.sexualLevel || 0,
-          is_deep: card.isDeep || false,
-          is_vote: card.isVote || false,
-          proximity_level: card.proximityLevel || null,
-          date_mode: card.dateMode || null,
-          explicitly_sexual: card.explicitlySexual || false,
-          is_ref: card.isRef || false,
-          is_interview: card.isInterview || false
-        })
-        .select()
-        .single();
-
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cards'] });
-    }
-  });
-};
-
-// Hook pour modifier une carte
-export const useUpdateCard = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async ({ id, ...card }: Card) => {
-      const { data, error } = await supabase
-        .from('cards')
-        .update({
-          content: card.content,
-          alcohol_level: card.alcoholLevel || 0,
-          sexual_level: card.sexualLevel || 0,
-          is_deep: card.isDeep || false,
-          is_vote: card.isVote || false,
-          proximity_level: card.proximityLevel || null,
-          date_mode: card.dateMode || null,
-          explicitly_sexual: card.explicitlySexual || false,
-          is_ref: card.isRef || false,
-          is_interview: card.isInterview || false
-        })
-        .eq('id', id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cards'] });
-    }
-  });
-};
-
-// Hook pour supprimer une carte (soft delete)
-export const useDeleteCard = () => {
-  const queryClient = useQueryClient();
-  
-  return useMutation({
-    mutationFn: async (cardId: string) => {
-      const { error } = await supabase
-        .from('cards')
-        .update({ is_active: false })
-        .eq('id', cardId);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['cards'] });
     }
   });
 };
