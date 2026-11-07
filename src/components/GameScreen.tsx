@@ -5,7 +5,8 @@ import { useCards } from '../hooks/useSupabaseCards';
 import { useSubscription } from '../hooks/useSubscription';
 import { insertPlayerNames, getAvailableCardsFromSupabase } from '../utils/gameUtils';
 import { selectOptimalCards } from '../utils/cardSelectionUtils';
-import { FREE_GAME_LENGTH, getGameLength } from '../config/freemium';
+import { FREE_GAME_LENGTH, getGameLength, isThemedMode } from '../config/freemium';
+import { markCardSeen } from '../utils/seenCards';
 
 const GameScreen = () => {
   const { gameSession, setGameSession, setCurrentScreen, players, relationships } = useGame();
@@ -32,14 +33,18 @@ const GameScreen = () => {
     }
   }, [players]);
 
-  // Longueur de partie selon le palier (gratuit court / premium long)
+  // Longueur de partie : gratuit court / premium long ; modes à thème = 15 pour tous
+  const themed = isThemedMode(gameSession?.preferences);
   useEffect(() => {
-    setTotalGameCards(getGameLength(subscribed || false));
-  }, [subscribed]);
+    setTotalGameCards(getGameLength(subscribed || false, themed));
+  }, [subscribed, themed]);
 
   useEffect(() => {
     const loadCards = async () => {
-      if (gameSession && players) {
+      // On ne construit le deck qu'au DÉBUT d'une partie. Avant, cet effet se
+      // relançait après la 1re carte (passage de 0 à 1 carte jouée) et
+      // remplaçait le deck en cours : la 2e carte « sautait ».
+      if (gameSession && players && gameSession.usedCardIds.length === 0) {
         setLoadComplete(false);
         try {
           const cards = await getAvailableCardsFromSupabase(
@@ -55,6 +60,7 @@ const GameScreen = () => {
           setAvailableCards(limitedCards);
 
           if (limitedCards.length > 0) {
+            markCardSeen(limitedCards[0].id);
             const result = insertPlayerNames(limitedCards[0].content, gameSession.players, playerTargetCounts);
             setCurrentCard(result.content);
 
@@ -103,6 +109,7 @@ const GameScreen = () => {
       setAvailableCards(remainingCards);
       
       // Utiliser le système de rotation équitable
+      markCardSeen(remainingCards[0].id);
       const result = insertPlayerNames(remainingCards[0].content, gameSession.players, playerTargetCounts);
       setCurrentCard(result.content);
       
@@ -148,6 +155,7 @@ const GameScreen = () => {
       
       // Mettre à jour la carte actuelle avec rotation équitable
       if (limitedCards.length > 0) {
+        markCardSeen(limitedCards[0].id);
         const result = insertPlayerNames(limitedCards[0].content, gameSession.players, playerTargetCounts);
         setCurrentCard(result.content);
         
@@ -270,7 +278,7 @@ const GameScreen = () => {
       return 'bg-gradient-to-br from-red-500 to-pink-600';
     } else if (alcoholLevel >= 4) {
       return 'bg-gradient-to-br from-orange-400 to-yellow-500';
-    } else if (gameSession.preferences.deepQuestions) {
+    } else if (gameSession.preferences.deepQuestions || gameSession.preferences.deepMode) {
       return 'bg-gradient-to-br from-purple-500 to-indigo-600';
     } else {
       return 'bg-gradient-to-br from-green-500 to-teal-600';
@@ -280,8 +288,11 @@ const GameScreen = () => {
   const getTitle = () => {
     if (!gameSession.preferences) return '🎯 Partie personnalisée';
     
-    const { sexualLevel, alcoholLevel, deepQuestions } = gameSession.preferences;
-    
+    const { sexualLevel, alcoholLevel, deepQuestions, interviewMode, deepMode, refMode } = gameSession.preferences;
+
+    if (interviewMode) return '🎤 Mode Interview';
+    if (deepMode) return '🌊 Questions deep';
+    if (refMode) return "🎯 T'as la réf";
     if (sexualLevel >= 4) return '🔥 Mode intense';
     if (alcoholLevel >= 4) return '🍻 Party mode';
     if (deepQuestions) return '🌊 Mode introspectif';
@@ -371,7 +382,7 @@ const GameScreen = () => {
               onClick={() => setCurrentScreen('payment')}
               className="mt-3 w-full text-center text-yellow-400/80 text-xs hover:text-yellow-400 transition-colors tap-highlight-none"
             >
-              💎 3× plus de cartes exclusives avec Premium →
+              💎 Parties 2× plus longues et cartes intenses avec Premium →
             </button>
           ) : (
             <p className="text-caption text-white/60 text-center mt-3">

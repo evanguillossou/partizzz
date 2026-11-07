@@ -11,6 +11,7 @@
  */
 
 import { Card, GamePreferences, Player } from '../types/game';
+import { FREE_MAX_INTENSITY } from '../config/freemium';
 import { RelationshipData } from '../types/relationships';
 import { getGroupProximityLevel } from './relationshipUtils';
 
@@ -121,54 +122,80 @@ export const getCardPriorityScore = (
 
 // ─── Filtre d'éligibilité ──────────────────────────────────────────────────
 
-export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): boolean => {
+// Cartes pensées pour un groupe (≥3 joueurs) : tour de table, vote, jugement
+// collectif ("le groupe juge", "selon le groupe"), désignation par majorité…
+// Aucune ne tient à 2 (le "groupe" = une seule personne). On exclut dès qu'un
+// marqueur collectif apparaît, peu importe la tournure de la phrase.
+// Chaque sous-regex cible une famille de tournures de groupe. Les garde-fous
+// (?!…) et le choix "la personne" (défini, jamais "une personne") protègent
+// les cartes valides à 2 :
+//   • "choisis UNE personne et regardez-vous" (duel à 2) → OK
+//   • "la personne à ta droite / de ton choix" → OK
+//   • "la personne la plus IMPORTANTE de ton téléphone" → OK
+//   • "les autres" au sens "les autres gens" (deep) → OK
+//   • "choisit UN artiste", "choisissez chacun un objet" → OK
+// NB : "distribue à qui tu veux" est jouable à 2 (l'autre = seule cible).
+const GROUP_PATTERNS: RegExp[] = [
+  // Mécaniques de groupe explicites
+  /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bmajorité\b/i,
+  /\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote/i,
+  // "chacun des joueurs/participants", "chaque personne/joueur" → ≥3 joueurs
+  /chacun des (joueurs|participants?|membres|autres)/i,
+  /chaque (personne|joueur|participant)/i,
+  // "les autres" SUIVI d'une action de groupe (pas "les autres gens"/"comprennent")
+  /les autres (devinent|devinez|votent|votez|jugent|jugez|notent|notez|décident|décidez|boivent|trinquent|choisissent|choisissez|désignent|comptent|miment|imitent|distribuent|pointent|répondent|valident)/i,
+  // Désignation par superlatif (= comparaison entre ≥3 joueurs)
+  /le joueur le plus|la personne avec le plus|la personne la plus(?! importante)/i,
+  /la personne dont[^.!?]*(distribue|distribuent|boit|boivent)/i,
+  // Verbe de désignation visant "quelqu'un" ou "la personne" (définie)
+  /(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*(\bquelqu['’]un\b|\bla personne\b)/i,
+];
+
+/**
+ * Explique pourquoi une carte ne sort PAS pour ce nombre de joueurs.
+ * Retourne null si la carte convient. Source unique de vérité : le jeu
+ * (isCardSuitableForPlayerCount) et le back-office s'appuient dessus.
+ */
+export const explainPlayerCountUnsuitability = (card: Card, playerCount: number): string | null => {
   // Compte les joueurs DISTINCTS référencés (pas les occurrences) : une carte
-  // qui répète "{player2}" reste une carte à 2 joueurs. Compter les occurrences
-  // faisait tomber, à chaque partie, toutes les cartes qui re-citent un joueur.
+  // qui répète "{player2}" reste une carte à 2 joueurs.
   const distinctPlayers = new Set(card.content.match(/\{player\d+\}/g) || []).size;
-
-  if (distinctPlayers > playerCount) return false;
-
-  if (playerCount === 2) {
-    if (card.isVote) return false;
-
-    // Cartes pensées pour un groupe (≥3 joueurs) : tour de table, vote, jugement
-    // collectif ("le groupe juge", "selon le groupe"), désignation par majorité…
-    // Aucune ne tient à 2 (le "groupe" = une seule personne). On exclut dès qu'un
-    // marqueur collectif apparaît, peu importe la tournure de la phrase.
-    // ── Marqueurs collectifs (regex décomposée pour rester maintenable) ──
-    // Chaque sous-regex cible une famille de tournures de groupe. On exclut la
-    // carte dès qu'UNE matche. Les garde-fous (?!…) et le choix "la personne"
-    // (défini, jamais "une personne") protègent les cartes valides à 2 :
-    //   • "choisis UNE personne et regardez-vous" (duel à 2) → OK
-    //   • "la personne à ta droite / de ton choix" → OK
-    //   • "la personne la plus IMPORTANTE de ton téléphone" → OK
-    //   • "les autres" au sens "les autres gens" (deep) → OK
-    //   • "choisit UN artiste", "choisissez chacun un objet" → OK
-    const groupPatterns: RegExp[] = [
-      // Mécaniques de groupe explicites
-      /tour de table|en cercle|\btout le monde\b|\bgroupe\b|\bmajorité\b/i,
-      /\bvote\b|\bvotez\b|\bvotent\b|\bvoté\b|\bon vote\b|du vote/i,
-      // "chacun des joueurs/participants", "chaque personne/joueur" → ≥3 joueurs
-      /chacun des (joueurs|participants?|membres|autres)/i,
-      /chaque (personne|joueur|participant)/i,
-      // "les autres" SUIVI d'une action de groupe (pas "les autres gens"/"comprennent")
-      /les autres (devinent|devinez|votent|votez|jugent|jugez|notent|notez|décident|décidez|boivent|trinquent|choisissent|choisissez|désignent|comptent|miment|imitent|distribuent|pointent|répondent|valident)/i,
-      // Désignation par superlatif (= comparaison entre ≥3 joueurs)
-      /le joueur le plus|la personne avec le plus|la personne la plus(?! importante)/i,
-      /la personne dont[^.!?]*(distribue|distribuent|boit|boivent)/i,
-      // Verbe de désignation visant "quelqu'un" ou "la personne" (définie)
-      /(distribue|distribuez|donne|donnez|offre|file|désigne|désignez|choisis|choisit|choisissez|pointe|pointez|cible|vise|fais boire|fait boire)[^.!?]*(\bquelqu['’]un\b|\bla personne\b)/i,
-    ];
-    if (groupPatterns.some(re => re.test(card.content))) return false;
-    // NB : "distribue à qui tu veux" est jouable à 2 (l'autre = seule cible) → on
-    // ne le bloque plus (l'ancien garde-fou supprimait des cartes 2j valides).
+  if (distinctPlayers > playerCount) {
+    return `elle nomme ${distinctPlayers} joueurs différents`;
   }
 
-  if (playerCount >= 3 && card.dateMode === 'exclusive') return false;
+  if (playerCount === 2) {
+    if (card.isVote) return 'carte de vote (réservée aux groupes)';
+    for (const re of GROUP_PATTERNS) {
+      const match = card.content.match(re);
+      if (match) return `formulation de groupe : « ${match[0]} »`;
+    }
+  }
 
-  return true;
+  if (playerCount >= 3 && card.dateMode === 'exclusive') {
+    return 'carte du mode date (couples uniquement)';
+  }
+
+  return null;
 };
+
+export const isCardSuitableForPlayerCount = (card: Card, playerCount: number): boolean =>
+  explainPlayerCountUnsuitability(card, playerCount) === null;
+
+/**
+ * Filtre d'accès selon l'abonnement. Sans abonnement : pas de cartes Premium,
+ * et rien au-dessus de l'intensité gratuite (3/5) — même avec la tolérance +1
+ * appliquée aux couples, qui laissait passer des cartes de niveau 4 en gratuit.
+ */
+export const filterCardsForTier = (cards: Card[], isSubscribed: boolean): Card[] =>
+  isSubscribed
+    ? cards
+    : cards.filter(
+        card =>
+          !card.isPremium &&
+          (card.alcoholLevel ?? 0) <= FREE_MAX_INTENSITY &&
+          (card.sexualLevel ?? 0) <= FREE_MAX_INTENSITY
+      );
 
 export const filterCardsByRules = (
   cards: Card[],
@@ -189,6 +216,15 @@ export const filterCardsByRules = (
       return !!card.isRef;
     } else {
       if (card.isRef) return false;
+    }
+
+    // Mode à thème "Questions deep" : uniquement les cartes isDeep, avec les
+    // filtres joueurs / intensité / proximité ci-dessous. Hors de ce mode, les
+    // cartes deep ne sortent que si l'ancien réglage deepQuestions est actif.
+    if (preferences.deepMode) {
+      if (!card.isDeep) return false;
+    } else if (card.isDeep && !preferences.deepQuestions) {
+      return false;
     }
 
     if (!isCardSuitableForPlayerCount(card, playerCount)) return false;
@@ -223,17 +259,16 @@ export const filterCardsByRules = (
       }
     }
 
-    // Filtre questions deep
-    if (card.isDeep && !preferences.deepQuestions) return false;
-
     // Filtre date mode
     if (card.dateMode === 'exclusive') {
       if (playerCount > 2) return false;
       if (playerCount === 2 && !preferences.discovery) return false;
     }
 
-    // Filtre votes pour 2 joueurs
-    if (card.isVote && playerCount === 2) return false;
+    // Cartes de vote : réservées aux groupes ET à l'option "Cartes votes de
+    // groupe" (Premium). Sans l'option, elles ne sortent pas — avant, elles
+    // sortaient pour tout le monde et l'option Premium ne servait à rien.
+    if (card.isVote && (playerCount === 2 || !preferences.votes)) return false;
 
     return true;
   });
@@ -314,11 +349,46 @@ const preventConsecutiveSameType = (cards: Card[], maxConsecutive = 2): Card[] =
   return result;
 };
 
+/**
+ * Cartes réellement jouables pour une configuration, avec leur score : même
+ * pipeline que la partie (dédoublonnage, règles d'éligibilité, score > 0).
+ * Source unique utilisée par le tirage ET par le tableau de bord du back-office.
+ */
+export const getPlayableCards = (
+  availableCards: Card[],
+  preferences: GamePreferences,
+  playerCount: number,
+  groupProximity: 'low' | 'medium' | 'high' = 'medium'
+): { card: Card; score: number }[] => {
+  const isDateMode = playerCount === 2 && preferences.discovery === true;
+
+  // 1. Filtrer les cartes inéligibles
+  const eligible = filterCardsByRules(availableCards, preferences, groupProximity, isDateMode, playerCount);
+
+  // 2. Dédoublonnage par CONTENU : deux cartes au texte identique ne doivent
+  //    jamais tomber 2× dans la même partie. On garde la 1re occurrence.
+  //    Fait APRÈS le filtre : sinon une jumelle d'un autre mode (non jouable
+  //    ici) pouvait éliminer la bonne carte, et le texte ne sortait nulle part.
+  const seenContent = new Set<string>();
+  const deduped = eligible.filter(card => {
+    const key = (card.content || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    if (!key || seenContent.has(key)) return false;
+    seenContent.add(key);
+    return true;
+  });
+
+  // 3. Scorer chaque carte (on écarte les scores nuls = non pertinents)
+  return deduped
+    .map(card => ({ card, score: getCardPriorityScore(card, preferences, groupProximity) }))
+    .filter(c => c.score > 0);
+};
+
 export const selectOptimalCards = (
   availableCards: Card[],
   preferences: GamePreferences,
   players: Player[],
-  relationships?: RelationshipData
+  relationships?: RelationshipData,
+  seen?: Map<string, number>
 ): Card[] => {
   const playerCount = players.length;
 
@@ -327,35 +397,8 @@ export const selectOptimalCards = (
       ? getGroupProximityLevel(players, relationships)
       : 'medium';
 
-  const isDateMode = playerCount === 2 && preferences.discovery === true;
-
-  // 0. Dédoublonnage par CONTENU : deux cartes au texte identique (IDs
-  //    différents en base, ex. doublons saisis à la main) ne doivent jamais
-  //    pouvoir tomber 2× dans la même partie. On garde la 1re occurrence.
-  const seenContent = new Set<string>();
-  const deduped = availableCards.filter(card => {
-    const key = (card.content || '').trim().toLowerCase().replace(/\s+/g, ' ');
-    if (!key || seenContent.has(key)) return false;
-    seenContent.add(key);
-    return true;
-  });
-
-  // 1. Filtrer les cartes inéligibles
-  const eligible = filterCardsByRules(
-    deduped,
-    preferences,
-    groupProximity,
-    isDateMode,
-    playerCount
-  );
-
-  // 2. Scorer chaque carte (on écarte les scores nuls = non pertinents)
-  const scored = eligible
-    .map(card => ({
-      card,
-      score: getCardPriorityScore(card, preferences, groupProximity),
-    }))
-    .filter(c => c.score > 0);
+  // 0-2. Cartes jouables pour cette configuration, avec leur score
+  const scored = getPlayableCards(availableCards, preferences, playerCount, groupProximity);
 
   // 3. Tri aléatoire PONDÉRÉ par le score (Efraimidis–Spirakis : clé = u^(1/poids)).
   //    Chaque partie pioche un mélange DIFFÉRENT dans TOUT le pool éligible, avec
@@ -366,6 +409,18 @@ export const selectOptimalCards = (
     .sort((a, b) => b.k - a.k)
     .map(x => x.card);
 
-  // 4. Éviter d'enchaîner trop de cartes du même type
+  // 4. Mémoire des cartes déjà jouées (sur l'appareil) : les cartes jamais vues
+  //    passent d'abord ; quand il n'en reste plus assez, les plus anciennement
+  //    vues reviennent en premier. Chaque bloc est entrelacé séparément pour
+  //    qu'une carte déjà vue ne remonte jamais devant une carte nouvelle.
+  if (seen && seen.size > 0) {
+    const fresh = weighted.filter(card => !seen.has(card.id));
+    const replay = weighted
+      .filter(card => seen.has(card.id))
+      .sort((a, b) => (seen.get(a.id) ?? 0) - (seen.get(b.id) ?? 0));
+    return [...preventConsecutiveSameType(fresh), ...preventConsecutiveSameType(replay)];
+  }
+
+  // 5. Éviter d'enchaîner trop de cartes du même type
   return preventConsecutiveSameType(weighted);
 };

@@ -16,20 +16,25 @@ export const PREMIUM_MAX_INTENSITY = 5;
 // Le gratuit a des parties plus courtes ; le premium des parties plus longues.
 export const FREE_GAME_LENGTH = 15;
 export const PREMIUM_GAME_LENGTH = 30;
+// Modes à thème (Interview, Questions deep, T'as la réf) : 15 cartes pour tous.
+// Ces questions prennent du temps : 15 cartes font déjà une vraie session.
+export const THEMED_GAME_LENGTH = 15;
 
 /**
- * Fonctionnalités "perso avancée" réservées au premium pour les groupes :
- *  - refMode    : mode "T'as la réf" (mode avancé à part entière)
- *  - deep       : questions profondes en groupe
- *  - votes      : cartes de vote de groupe ("qui dans le groupe…")
- *
- * Les couples conservent leurs modes deep / découverte gratuitement
- * (cœur de l'expérience à 2).
+ * Fonctionnalités réservées au premium :
+ *  - refMode : mode à thème "T'as la réf" (groupes)
+ *  - deep    : mode à thème "Questions deep"
+ *  - votes   : cartes de vote de groupe ("qui dans le groupe…")
  */
 export type PremiumFeature = 'refMode' | 'deep' | 'votes';
 
 export const clampIntensityForTier = (level: number, subscribed: boolean): number =>
   subscribed ? level : Math.min(level, FREE_MAX_INTENSITY);
 
-export const getGameLength = (subscribed: boolean): number =>
-  subscribed ? PREMIUM_GAME_LENGTH : FREE_GAME_LENGTH;
+/** Vrai si la partie est un mode à thème (Interview, Questions deep, T'as la réf). */
+export const isThemedMode = (
+  prefs?: { interviewMode?: boolean; refMode?: boolean; deepMode?: boolean } | null
+): boolean => !!(prefs && (prefs.interviewMode || prefs.refMode || prefs.deepMode));
+
+export const getGameLength = (subscribed: boolean, themed = false): number =>
+  themed ? THEMED_GAME_LENGTH : subscribed ? PREMIUM_GAME_LENGTH : FREE_GAME_LENGTH;

@@ -20,6 +20,7 @@ export interface GamePreferences {
   discovery?: boolean; // Mode "date" — masqué de l'UI, cartes conservées en base
   refMode?: boolean; // Mode "T'as la réf"
   interviewMode?: boolean; // Mode "Interview" (questions style interview TV)
+  deepMode?: boolean; // Mode à thème "Questions deep" (Premium) : uniquement les cartes isDeep
 }
 
 export interface Card {

@@ -1,7 +1,8 @@
 
 import { Player, Card } from '../types/game';
 import { RelationshipData } from '../types/relationships';
-import { selectOptimalCards } from './cardSelectionUtils';
+import { selectOptimalCards, filterCardsForTier } from './cardSelectionUtils';
+import { loadSeenCards } from './seenCards';
 import { supabase } from '@/integrations/supabase/client';
 import { cards as localCards } from '@/data/gameData';
 
@@ -75,6 +76,25 @@ export const insertPlayerNamesSimple = (cardContent: string, players: Player[]):
   return insertPlayerNames(cardContent, players).content;
 };
 
+// Prépare le deck d'une partie : retire les cartes déjà jouées dans la partie,
+// applique l'accès selon l'abonnement, puis la sélection intelligente (avec la
+// mémoire des cartes déjà vues sur cet appareil).
+const prepareDeck = (
+  allCards: Card[],
+  gameSession: any,
+  usedCardIds: string[],
+  players: Player[] | undefined,
+  relationships: RelationshipData | undefined,
+  isSubscribed: boolean
+): Card[] => {
+  const notUsed = allCards.filter(card => !usedCardIds.includes(card.id));
+  const allowed = filterCardsForTier(notUsed, isSubscribed);
+  if (gameSession.preferences && players) {
+    return selectOptimalCards(allowed, gameSession.preferences, players, relationships, loadSeenCards());
+  }
+  return allowed;
+};
+
 // Fonction pour récupérer les cartes depuis Supabase
 export const getAvailableCardsFromSupabase = async (
   gameSession: any,
@@ -108,36 +128,11 @@ export const getAvailableCardsFromSupabase = async (
       isInterview: card.is_interview || false
     }));
     
-    // Filtrer les cartes déjà utilisées
-    let availableCards = allCards.filter(card => !usedCardIds.includes(card.id));
-
-    // Filtrer les cartes premium selon l'abonnement
-    if (!isSubscribed) {
-      availableCards = availableCards.filter(card => !card.isPremium);
-    }
-
-    // Si on a les préférences, utiliser le nouvel algorithme intelligent
-    if (gameSession.preferences && players) {
-      availableCards = selectOptimalCards(
-        availableCards, 
-        gameSession.preferences, 
-        players, 
-        relationships
-      );
-    }
-
-    return availableCards;
+    return prepareDeck(allCards, gameSession, usedCardIds, players, relationships, isSubscribed);
   } catch (error) {
     console.warn('Supabase inaccessible, fallback local:', error);
     // Fallback vers les données locales (gameData.ts)
-    let available = localCards.filter(card => !usedCardIds.includes(card.id));
-    if (!isSubscribed) {
-      available = available.filter(card => !card.isPremium);
-    }
-    if (gameSession.preferences && players) {
-      available = selectOptimalCards(available, gameSession.preferences, players, relationships);
-    }
-    return available;
+    return prepareDeck(localCards, gameSession, usedCardIds, players, relationships, isSubscribed);
   }
 };
 
